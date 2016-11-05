@@ -9,6 +9,8 @@ xeroclient is a PHP library that extends Guzzle to provide integration with the 
 
 Ultimately it is up to the software that uses xeroclient to deal with [serialization](http://symfony.com/doc/current/components/serializer.html), data modeling, and configuration or content management.
 
+[![Build Status](https://travis-ci.org/mradcliffe/xeroclient.svg?branch=master)](https://travis-ci.org/mradcliffe/xeroclient)
+
 ## Dependencies
 
 * [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
