@@ -13,6 +13,7 @@ Ultimately it is up to the software that uses xeroclient to deal with [serializa
 
 ## Dependencies
 
+* PHP 5.6 or greater
 * [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
 * [guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
 
