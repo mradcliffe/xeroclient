@@ -2,10 +2,12 @@
 
 namespace Radcliffe\Tests\Xero;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Base test class for xero client tests.
  */
-class XeroClientTestBase extends \PHPUnit_Framework_TestCase
+class XeroClientTestBase extends TestCase
 {
 
     /**

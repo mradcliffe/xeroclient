@@ -89,7 +89,7 @@ class XeroClient extends Client implements XeroClientInterface
      */
     public function isValidPrivateKey($filename)
     {
-        if ($filename && realpath($filename)) {
+        if ($filename && realpath($filename) && !is_dir($filename) && is_readable($filename)) {
             return true;
         }
         return false;

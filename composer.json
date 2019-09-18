@@ -21,10 +21,10 @@
     }
   },
   "require": {
-    "guzzlehttp/oauth-subscriber": "~0.3.0"
+    "guzzlehttp/oauth-subscriber": "~0.3.0",
+    "php": "^7.0"
   },
   "require-dev": {
-    "phpspec/prophecy": "~1.6.1",
-    "phpunit/phpunit": "~5.6.1"
+    "phpunit/phpunit": "~6.5.14"
   }
 }
