@@ -29,6 +29,11 @@ class XeroClientTest extends XeroClientTestBase
         $this->assertNull($client);
     }
 
+    /**
+     * Asserts private application instantiation.
+     *
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
+     */
     public function testPrivateApplication()
     {
         $options = $this->createConfiguration();
@@ -36,6 +41,11 @@ class XeroClientTest extends XeroClientTestBase
         $this->assertNotNull($client);
     }
 
+    /**
+     * Asserts public application instantiation.
+     *
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
+     */
     public function testPublicApplication()
     {
         $options = $this->createConfiguration('accounting', 'public');
@@ -43,6 +53,9 @@ class XeroClientTest extends XeroClientTestBase
         $this->assertNotNull($client);
     }
 
+    /**
+     * Asserts get request token.
+     */
     public function testGetRequestToken()
     {
         $options = $this->createConfiguration('accounting', 'public');
@@ -59,6 +72,9 @@ class XeroClientTest extends XeroClientTestBase
         $this->assertEquals($expected, $tokens);
     }
 
+    /**
+     * Asserts getting an access token.
+     */
     public function testGetAccessToken()
     {
         $expected = [
@@ -93,6 +109,8 @@ class XeroClientTest extends XeroClientTestBase
      * @param $body
      *
      * @dataProvider providerGetTest
+     *
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testGet($statusCode, $headers, $body)
     {
@@ -111,6 +129,29 @@ class XeroClientTest extends XeroClientTestBase
     }
 
     /**
+     * Tests trying to use an unreadable file.
+     *
+     * @expectedException \Radcliffe\Xero\Exception\InvalidOptionsException
+     */
+    public function testUnreadableFile()
+    {
+        $path = __DIR__ . '/../fixtures/notreadable.pem';
+        $options = [
+            'base_uri' => 'https://api.xero.com/api.xro/2.0/',
+            'consumer_key' => 'test',
+            'consumer_secret' => 'test',
+            'private_key' => $path,
+            'application' => 'private',
+        ];
+        chmod($path, 000);
+        $client = new XeroClient($options);
+        $this->assertNull($client);
+
+        // Test cleanup.
+        chmod($path, 0644);
+    }
+
+    /**
      * @return array
      */
     public function invalidOptionsExceptionProvider()
@@ -122,21 +163,21 @@ class XeroClientTest extends XeroClientTestBase
                 [
                     'base_uri' => 'https://api.xero.com/api.xro/2.0/',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
                     'base_uri' => 'https://api.xero.com/api.xro/2.0/',
                     'consumer_key' => '',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
                     'base_uri' => 'https://api.xero.com/api.xro/2.0/',
                     'consumer_key' => 'test',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
@@ -144,7 +185,7 @@ class XeroClientTest extends XeroClientTestBase
                     'consumer_key' => 'test',
                     'consumer_secret' => '',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
@@ -152,7 +193,7 @@ class XeroClientTest extends XeroClientTestBase
                     'consumer_key' => 'test',
                     'consumer_secret' => 'test',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
@@ -161,7 +202,7 @@ class XeroClientTest extends XeroClientTestBase
                     'consumer_secret' => 'test',
                     'private_key' => '',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
@@ -170,7 +211,7 @@ class XeroClientTest extends XeroClientTestBase
                     'consumer_secret' => 'test',
                     'private_key' => 'nofile.pem',
                     'application' => 'private',
-                ]
+                ],
             ],
             [
                 [
@@ -179,8 +220,17 @@ class XeroClientTest extends XeroClientTestBase
                     'consumer_secret' => 'test',
                     'private_key' => 'testfile.pem',
                     'application' => 'private',
-                ]
-            ]
+                ],
+            ],
+            [
+                [
+                    'base_uri' => 'https://api.xero.com/api.xro/2.0/',
+                    'consumer_key' => 'test',
+                    'consumer_secret' => 'test',
+                    'private_key' => __DIR__,
+                    'application' => 'private',
+                ],
+            ],
         ];
     }
 
