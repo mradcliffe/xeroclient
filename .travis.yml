@@ -18,6 +18,10 @@ git:
 
 sudo: false
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 install:
   - composer self-update
   - git config --global github.accesstoken $GITHUB_OAUTH_TOKEN
