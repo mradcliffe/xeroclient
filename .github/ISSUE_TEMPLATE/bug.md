@@ -1,13 +1,19 @@
 Issue   | Metadata
 ------- | -------------------------------
-Type    | one of **bug**, **feature**, or **task**
+Type    | **bug**
 Version | one of **version**, **branch**, or **commit hash**
 
 ### Problem/Motivation
 
 **IMPORTANT: Do not include any sensitive information such as certificates, private keys, public keys, or personally-identifiable information from your application.!**
 
-> Describe **what** such as steps to reproduce.
+#### Steps to Reproduce
+
+1.
+1.
+1.
+
+#### Details
 
 > (Optional) Describe **why** the issue happens, if possible.
 
