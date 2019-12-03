@@ -1,3 +1,12 @@
+---
+name: Feature
+about: Discuss a feature to improve developer experience
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 Issue   | Metadata
 ------- | -------------------------------
 Type    | **feature**

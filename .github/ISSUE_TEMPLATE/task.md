@@ -1,3 +1,12 @@
+---
+name: Task
+about: An actionable item that needs to be done in the project.
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 Issue   | Metadata
 ------- | -------------------------------
 Type    | **task**

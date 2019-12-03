@@ -1,3 +1,12 @@
+---
+name: Bug
+about: Report non-functional behavior.
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 Issue   | Metadata
 ------- | -------------------------------
 Type    | **bug**
