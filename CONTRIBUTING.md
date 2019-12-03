@@ -26,7 +26,13 @@ See the [README](./README.md) for usage and installation instructions.
 
 ### Reporting an issue
 
-Reporting an issue is one of the most important means of contribution. Creating an issue is great!
+Reporting an issue is one of the most important means of contribution. An issue can be a
+
+1. **task** - an actionable "thing" that needs to be done on the project such as "Improve test coverage for private application work flow".
+2. **bug** - a report of non-working behavior related to the project and how you integrate with your appplication such as "Unable to use on PHP 7.3".
+3. **feature** - a nice-to-have that would improve developer experience when integrating the project with your application such as "Add an Exception class to isolate certificate expiration errors".
+
+Issue titles are usually respectful *imperatives*, and should not indicate urgency or priority.
 
 1. Search the issue queue for one or more key words that may be related to a bug, task, or feature that you are interested in.
 2. Create the issue using the [issue template](./ISSUE_TEMPLATE.md).
