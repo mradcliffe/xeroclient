@@ -35,7 +35,7 @@ Reporting an issue is one of the most important means of contribution. An issue 
 Issue titles are usually respectful *imperatives*, and should not indicate urgency or priority.
 
 1. Search the issue queue for one or more key words that may be related to a bug, task, or feature that you are interested in.
-2. Create the issue using the [issue template](./ISSUE_TEMPLATE.md).
+2. Create the issue using the [issue template](./.github/ISSUE_TEMPLATE/issue_template.md).
 
 ### Contributing to an issue
 
