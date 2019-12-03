@@ -11,9 +11,11 @@ Ultimately it is up to the software that uses xeroclient to deal with [serializa
 
 [![Build Status](https://travis-ci.org/mradcliffe/xeroclient.svg?branch=master)](https://travis-ci.org/mradcliffe/xeroclient)
 
+**Please see [CONTRIBUTING](./CONTRIBUTING.md) for more information about contributing to this project including Code of Conduct, Accountability, and How to get started.**
+
 ## Dependencies
 
-* PHP 5.6 or greater
+* PHP 7.0 or greater
 * [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
 * [guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
 
@@ -86,7 +88,7 @@ The XeroHelperTrait provides some useful methods to attach to your classes for d
 * This software is primarily licensed under the MIT license.
 * Exception is granted to use the software under the GPLv2 license.
 
-## Other libraries
+## Alternate libraries
 
 * [xero-php](https://github.com/calcinai/xero-php) provides an all-in-one solution based on data model assumptions using Curl for PHP 5.3 applications.
 * [PHP-Xero](https://github.com/drpitman/PHP-Xero) provides OAuth1 and Xero classes in the global namespace. Horribly outdated and should not be used. I have a [fork](https://github.com/mradcliffe/PHP-Xero).
@@ -97,4 +99,4 @@ The XeroHelperTrait provides some useful methods to attach to your classes for d
 
 ## Affiliation
 
-This library is not affiliated with Xero.
+This library is not affiliated with Xero Limited.

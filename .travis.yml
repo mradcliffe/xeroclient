@@ -16,6 +16,10 @@ matrix:
 git:
   depth: 1
 
+branches:
+  only:
+    - master
+
 sudo: false
 
 cache:
