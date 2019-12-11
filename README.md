@@ -7,7 +7,7 @@ xeroclient is a PHP library that extends Guzzle to provide integration with the 
 3. Is lightweight and pluggable into a variety of frameworks that do normalization and data modeling their own way.
 4. Is testable.
 
-Ultimately it is up to the software that uses xeroclient to deal with [serialization](http://symfony.com/doc/current/components/serializer.html), data modeling, and configuration or content management.
+Ultimately it is up to the software that uses xeroclient to deal with [serialization](http://symfony.com/doc/current/components/serializer.html), data modeling, OAuth2 redirect work flow, and configuration or content management.
 
 [![Build Status](https://travis-ci.org/mradcliffe/xeroclient.svg?branch=master)](https://travis-ci.org/mradcliffe/xeroclient)
 
@@ -16,28 +16,55 @@ Ultimately it is up to the software that uses xeroclient to deal with [serializa
 ## Dependencies
 
 * PHP 7.0 or greater
-* [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
+* (Deprecated) [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
+* [league/oauth2-client](https://packagist.org/packages/league/oauth2-client)
 * [guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
 
 ## Usage
 
-### Use with a private application
+### Request an access token from Xero API using OAuth2.
 
 ```php
+// Create a new provider.
+$provider = new \Radcliffe\Xero\XeroProvider([
+    'clientId' => 'my consumer key',
+    'clientSecret' => 'my consumer secret',
+    'redirectUri' => 'https://example.com/path/to/my/xero/callback',
+    // This will always request offline_access.
+    'scopes' => \Radcliffe\Xero\XeroProvider::getValidScopes('accounting'),
+]);
 
-$config = [
-	// Note the trailing slash.
-	'base_uri' => 'https://api.xero.com/api.xro/2.0/',
-	'application' => 'private',
-	'consumer_key' => '',
-	'consumer_secret' => '',
-	// This path must be accessible by file_get_contents(), which does support
-	// registered stream wrappers, but php://memory will not work.
-	'private_key' => '/path/to/private/application/key',
-];
+// Gets the URL to go to get an authorization code from Xero.
+$url = $provider->getAuthorizationUrl();
+```
 
-$client = new \Radcliffe\Xero\XeroClient($config);
+### Create a guzzle client from an authorization code (see above)
 
+```php
+$client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my consumer secret', $code, 'authorization_code', 'accounting');
+// Store the access token for the next 30 minutes or so if making additional requests.
+$tokens = $client->getRefreshedToken();
+```
+
+### Create a guzzle client with an access token
+
+```php
+$client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my consumer secret', 'my access token');
+```
+
+### Create a guzzle client with a refresh token
+
+Access tokens expire after 30 minutes so you can create a new client with a stored refresh token too.
+
+```php
+$client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my consumer secret', 'my request token', 'request_token', 'accounting');
+// Get the refreshed tokens and store it somewhere.
+$tokens = $client->getRefreshedToken();
+```
+
+### Use the client instance to make requests
+
+```php
 try {
 	$options = [
 		'query' => ['where' => 'Name.StartsWith("John")'],
@@ -47,37 +74,15 @@ try {
 
 	// Or use something like Symfony Serializer component.
 	$accounts = json_decode($response->getBody()->getContents());
-} catch (\GuzzleHttp\Exception\RequestException $e) {
+} catch (\GuzzleHttp\Exception\ClientException $e) {
 	echo 'Request failed because of ' . $e->getResponse()->getStatusCode();
 }
 
 ```
 
-### Use with a public or partner application
+### Use with a legacy OAuth1 application
 
-* Assumes that your web site will handle routing to accept oauth callbacks from Xero.
-* xeroclient provides some static methods on the XeroClient class to make request token and access token requests.
-	* `$requestTokens = XeroClient::getRequestToken($consumer_key, $consumer_secret, ['application' => 'public']);`
-	* Assumes that your web site will handle routing and storage for OAuth1 authorization process.
-	* `$accessTokens = XeroClient::getAccessToken($consumer_key, $consumer_secret, $token, $token_secret, $verifier, ['application' => 'public']);`
-	* Then you can make requests with the configuration below:
-
-```
-$config = [
-	// Note the trailing slash.
-	'base_uri' => 'https://api.xero.com/api.xro/2.0/',
-	'application' => 'public',
-	'consumer_key' => $consumer_key,
-	'consumer_secret' => $consumer_secret,
-	'token' => $accessTokens['oauth_token'],
-	'token_secret' => $accessTokens['oauth_token_secret'],
-	// This path must be accessible by file_get_contents(), which does support
-	// registered stream wrappers, but php://memory will not work.
-	'private_key' => '/path/to/public/application/key',
-];
-$client = new XeroClient($config);
-$response = $client->get('Accounts');
-```
+Please see the 0.2 branch and versions < 0.3.0.
 
 ### Xero Helper Trait
 
@@ -90,6 +95,7 @@ The XeroHelperTrait provides some useful methods to attach to your classes for d
 
 ## Alternate libraries
 
+* [xero-php-oauth2](https://github.com/XeroAPI/xero-php-oauth2) provides an auto-generated SDK for accessing the Xero API that injects Guzzle into each model.
 * [xero-php](https://github.com/calcinai/xero-php) provides an all-in-one solution based on data model assumptions using Curl for PHP 5.3 applications.
 * [PHP-Xero](https://github.com/drpitman/PHP-Xero) provides OAuth1 and Xero classes in the global namespace. Horribly outdated and should not be used. I have a [fork](https://github.com/mradcliffe/PHP-Xero).
 * [XeroBundle](https://github.com/james75/XeroBundle) provides a Symfony2 Bundle that is the inspiration for this lightweight library. It is possible to wrap your own factory class to ignore the Symfony2 bundle configuration. Currently broken (my fault) unless you use [my fork](https://github.com/mradcliffe/XeroBundle).
