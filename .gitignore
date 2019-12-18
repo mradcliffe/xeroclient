@@ -6,3 +6,5 @@
 Thumbs.db
 composer.lock
 /coverage
+
+example.php
