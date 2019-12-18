@@ -251,7 +251,7 @@ class XeroClient extends Client implements XeroClientInterface
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      * @throws \GuzzleHttp\Exception\ClientException
      */
-    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = [])
+    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = [], array $collaborators = [])
     {
         if ($grant !== null) {
             // Fetch a new access token from a refresh token.
@@ -259,7 +259,7 @@ class XeroClient extends Client implements XeroClientInterface
                 'clientId' => $id,
                 'clientSecret' => $secret,
                 'scopes' => XeroProvider::getValidScopes($api),
-            ]);
+            ], $collaborators);
             $token_options = [];
             if ($grant === 'refresh_token') {
                 $token_options['refresh_token'] = $token;

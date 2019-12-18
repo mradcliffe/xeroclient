@@ -117,8 +117,12 @@ interface XeroClientInterface
      *   payroll_COUNTRYCODE, files, assets, projects, restricted, or openid.
      * @param array $options
      *   Any additional options to pass to the constructor.
+     * @param array $collaborators
+     *   Collaborator options to pass-through to the provider initialize method.
+     *
+     * @see \League\OAuth2\Client\Provider\AbstractProvider::__construct()
      *
      * @return static
      */
-    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = []);
+    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = [], array $collaborators = []);
 }

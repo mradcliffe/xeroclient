@@ -75,18 +75,10 @@ class XeroProviderTest extends TestCase
               ],
               'payroll_nz',
             ],
-            [
-                ['offline_access', 'files', 'files.read'],
-                'files',
-            ],
-            [
-                ['offline_access', 'projects', 'projects.read'],
-                'projects',
-            ],
-            [
-                ['offline_access', 'paymentservices', 'bankfeeds'],
-                'restricted',
-            ],
+            [['offline_access', 'files', 'files.read'], 'files'],
+            [['offline_access', 'projects', 'projects.read'], 'projects'],
+            [['offline_access', 'paymentservices', 'bankfeeds'], 'restricted'],
+            [['offline_access', 'assets', 'assets.read'], 'assets'],
         ];
     }
 }
