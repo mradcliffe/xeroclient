@@ -61,10 +61,9 @@ class XeroProvider extends AbstractProvider
     {
         $statusCode = $response->getStatusCode();
         if ($statusCode === 429) {
-            throw new IdentityProviderException('Rate limit exceeded', $statusCode, '');
+            throw new IdentityProviderException('Rate limit exceeded', $statusCode, $data);
         } elseif ($statusCode >= 400) {
-            $rawText = $response->getBody()->getContents();
-            throw new IdentityProviderException($this->getResponseMessage($rawText), $statusCode, $rawText);
+            throw new IdentityProviderException($this->getResponseMessage($data), $statusCode, $data);
         }
     }
 
@@ -81,16 +80,13 @@ class XeroProvider extends AbstractProvider
     /**
      * Gets a formatted error message from an error response.
      *
-     * @param string $raw
-     *   The raw response body.
+     * @param array $data
+     *   The structured response message.
      *
      * @return string
      */
-    protected function getResponseMessage($raw)
+    protected function getResponseMessage($data)
     {
-        // Attempts to decode the response body as simple JSON.
-
-        $data = json_decode($raw, true);
         $error = 'An unknown error occurred with this request';
         if ($data !== null && isset($data['error'])) {
             if (isset($this->errorMap[$data['error']])) {
