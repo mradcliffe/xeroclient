@@ -126,7 +126,7 @@ class XeroProvider extends AbstractProvider
                 $scopes[] = "accounting.$type";
                 $scopes[] = "accounting.$type.read";
             }
-            $scopes = array_merge($scopes, ['accounting.reports.read', 'accounting.journal.read']);
+            $scopes = array_merge($scopes, ['accounting.reports.read', 'accounting.journals.read']);
         } elseif (substr($api, 0, 7) === 'payroll') {
             // @todo Split the logic into au, uk, nz, and other sections as necessary.
             $types = ['employees', 'payruns', 'payslip', 'timesheets', 'settings'];
