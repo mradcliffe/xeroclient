@@ -20,6 +20,16 @@ class XeroProvider extends AbstractProvider
         'unauthorized_client' => 'Invalid callback URI',
     ];
 
+    public static $validScopes = [
+      'offline_access', 'openid', 'profile', 'email', 'accounting.transactions', 'accounting.transactions.read',
+      'accounting.reports.read', 'accounting.journals.read', 'accounting.settings', 'accounting.settings.read',
+      'accounting.contacts',  'accounting.contacts.read', 'accounting.attachments', 'accounting.attachments.read',
+      'payroll.employees', 'payroll.employees.read', 'payroll.payruns', 'payroll.payruns.read', 'payroll.payslip',
+      'payroll.payslip.read', 'payroll.timesheets', 'payroll.timesheets.read', 'payroll.settings',
+      'payroll.settings.read', 'files', 'file.read', 'assets', 'assets.read', 'projects', 'projects.read',
+      'paymentservices', 'bankfeeds',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -111,12 +121,18 @@ class XeroProvider extends AbstractProvider
      * Gets the valid scopes for an API.
      *
      * @param string $api
-     *   (optional) One of openid, accounting, payroll_COUNTRYID, files, assets, projects, or restricted.
+     *   (optional) One of openid, accounting, payroll_COUNTRYID, files, assets, projects, custom, or restricted.
+     * @param array $custom
+     *   (optional) Use the scopes defined here when "custom" is defined above and these scopes are valid.
      *
      * @return string[]
      */
-    public static function getValidScopes($api = '')
+    public static function getValidScopes($api = '', array $custom = [])
     {
+        if ($api === 'custom') {
+            return array_filter($custom, [__CLASS__, 'isValidScope']);
+        }
+
         $scopes = ['offline_access'];
         if ($api === 'openid') {
             $scopes = array_merge($scopes, ['openid', 'profile', 'email']);
@@ -145,5 +161,19 @@ class XeroProvider extends AbstractProvider
         }
 
         return $scopes;
+    }
+
+    /**
+     * Checks if a scope is valid.
+     *
+     * @param string $scope
+     *   The scope to check.
+     *
+     * @return bool
+     *   True if the scope is a valid scope for the Xero API.
+     */
+    public static function isValidScope($scope)
+    {
+        return in_array($scope, static::$validScopes);
     }
 }

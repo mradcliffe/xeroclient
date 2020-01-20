@@ -19,7 +19,11 @@ class XeroProviderTest extends TestCase
      */
     public function testGetValidScopes(array $expected, $api = '')
     {
-        $this->assertEquals($expected, XeroProvider::getValidScopes($api));
+        $custom = [];
+        if ($api === 'custom') {
+            $custom = ['accounting.transactions.read', 'accounting.reports.read'];
+        }
+        $this->assertEquals($expected, XeroProvider::getValidScopes($api, $custom));
     }
 
     public function validScopesProvider()
@@ -79,6 +83,7 @@ class XeroProviderTest extends TestCase
             [['offline_access', 'projects', 'projects.read'], 'projects'],
             [['offline_access', 'paymentservices', 'bankfeeds'], 'restricted'],
             [['offline_access', 'assets', 'assets.read'], 'assets'],
+            [['accounting.transactions.read', 'accounting.reports.read'], 'custom'],
         ];
     }
 }
