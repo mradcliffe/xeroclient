@@ -9,7 +9,7 @@ php:
 matrix:
   allow_failures:
     -
-      php: 7.3
+      php: 7.1
     -
       php: 7.4snapshot
 
@@ -33,6 +33,7 @@ install:
 
 script:
   - vendor/bin/phpunit --coverage-text=coverage.txt
+  - vendor/bin/phpcs --report-summary --report-gitblame --runtime-set exitIgnoreWarnings true .
 
 after_script:
   - head coverage.txt
