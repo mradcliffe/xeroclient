@@ -33,7 +33,7 @@ install:
 
 script:
   - vendor/bin/phpunit --coverage-text=coverage.txt
-  - vendor/bin/phpcs --report-summary --report-gitblame --runtime-set exitIgnoreWarnings true .
+  - vendor/bin/phpcs --report-summary --report-gitblame .
 
 after_script:
   - head coverage.txt
