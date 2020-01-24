@@ -27,7 +27,10 @@ class XeroClientTestBase extends TestCase
      */
     protected function createConfiguration($api = 'accounting', $application = 'private')
     {
-        $base_uri = $api === 'accounting' ? 'https://api.xero.com/api.xro/2.0/' : 'https://api.xero.com/payroll.xro/1.0/';
+        $base_uri = 'https://api.xero.com/payroll.xro/1.0/';
+        if ($api === 'accounting') {
+            $base_uri = 'https://api.xero.com/api.xro/2.0/';
+        }
 
         $options = [
             'base_uri' => $base_uri,
