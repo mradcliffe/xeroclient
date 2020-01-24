@@ -124,5 +124,13 @@ interface XeroClientInterface
      *
      * @return static
      */
-    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = [], array $collaborators = []);
+    public static function createFromToken(
+        $id,
+        $secret,
+        $token,
+        $grant = null,
+        $api = 'accounting',
+        array $options = [],
+        array $collaborators = []
+    );
 }

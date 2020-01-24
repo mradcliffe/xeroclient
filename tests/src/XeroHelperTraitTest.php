@@ -144,7 +144,8 @@ class XeroHelperTraitTest extends XeroClientTestBase
             'oauth_token' => $this->createRandomString(),
             'oauth_verifier' => $this->createRandomString()
         ];
-        $test1_string = 'oauth_token=' . urlencode($test1_expected['oauth_token']) . '&' . 'oauth_verifier=' . urlencode($test1_expected['oauth_verifier']);
+        $test1_string = 'oauth_token=' . urlencode($test1_expected['oauth_token']) . '&' . 'oauth_verifier=' .
+            urlencode($test1_expected['oauth_verifier']);
 
         return [
             [$test1_string, $test1_expected],

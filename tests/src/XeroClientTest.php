@@ -245,7 +245,8 @@ class XeroClientTest extends XeroClientTestBase
                 ['Content-Type' => 'text/xml'],
                 '<?xml encoding="UTF-8" version="1.0"?><BrandingThemes><BrandingTheme><BrandingThemeID>' .
                 $this->createGuid() .
-                '</BrandingThemeID><Name>Standard</Name><SortOrder>0</SortOrder><CreatedDateUTC>2010-06-29T18:16:36.27</CreatedDateUTC></BrandingTheme></BrandingThemes>',
+                '</BrandingThemeID><Name>Standard</Name><SortOrder>0</SortOrder><CreatedDateUTC>' .
+                '2010-06-29T18:16:36.27</CreatedDateUTC></BrandingTheme></BrandingThemes>',
             ]
         ];
     }

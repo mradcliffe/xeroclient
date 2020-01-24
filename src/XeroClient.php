@@ -3,7 +3,6 @@
 namespace Radcliffe\Xero;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
 use Radcliffe\Xero\Exception\InvalidOptionsException;
@@ -251,8 +250,15 @@ class XeroClient extends Client implements XeroClientInterface
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      * @throws \GuzzleHttp\Exception\ClientException
      */
-    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = [], array $collaborators = [])
-    {
+    public static function createFromToken(
+        $id,
+        $secret,
+        $token,
+        $grant = null,
+        $api = 'accounting',
+        array $options = [],
+        array $collaborators = []
+    ) {
         if ($grant !== null) {
             // Fetch a new access token from a refresh token.
             $provider = new XeroProvider([
