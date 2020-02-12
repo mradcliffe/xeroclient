@@ -86,6 +86,10 @@ class XeroClient extends Client implements XeroClientInterface
                 throw new InvalidOptionsException('Missing required parameter auth_token');
             }
             $options['headers']['Authorization'] = 'Bearer ' . $config['auth_token'];
+
+            if (isset($config['tenant'])) {
+                $options['headers']['xero-tenant-id'] = $config['tenant'];
+            }
         } else {
             throw new InvalidOptionsException('Invalid scheme provided');
         }
@@ -241,6 +245,22 @@ class XeroClient extends Client implements XeroClientInterface
             $tokens[$parameter] = isset($split[1]) ? urldecode($split[1]) : '';
         }
         return $tokens;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConnections()
+    {
+        try {
+            $response = $this->get('https://api.xero.com/connections', ['Content-Type' => 'application/json']);
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (RequestException $e) {
+            if ($e->getCode() >= 400) {
+                throw $e;
+            }
+            return [];
+        }
     }
 
     /**
