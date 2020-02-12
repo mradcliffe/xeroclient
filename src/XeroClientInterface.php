@@ -86,6 +86,14 @@ interface XeroClientInterface
     );
 
     /**
+     * Get connections authorized by the user.
+     *
+     * @return array
+     *   An indexed array of connections authorized by the user.
+     */
+    public function getConnections();
+
+    /**
      * Create client from an existing token or code.
      *
      * Regardless of the parameters, the returned object will be a Guzzle Client

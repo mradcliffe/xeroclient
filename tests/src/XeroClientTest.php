@@ -152,6 +152,37 @@ class XeroClientTest extends XeroClientTestBase
     }
 
     /**
+     * Asserts that connections are returned and decoded.
+     *
+     * @param int $statusCode
+     *   The HTTP status code to mock.
+     * @param array $response
+     *   The response body to encode as json.
+     * @param int $expectedCount
+     *   The expected number of connections.
+     *
+     * @dataProvider connectionsResponseProvider
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
+     */
+    public function testGetConnections($statusCode, array $response, $expectedCount)
+    {
+        $mock = new MockHandler([
+            new Response($statusCode, [
+              'Content-Type' => 'application/json',
+            ], json_encode($response)),
+        ]);
+        $client = new XeroClient([
+          'base_uri' => 'https://api.xero.com/connections',
+          'scheme' => 'oauth2',
+          'auth_token' => $this->createRandomString(),
+          'handler' => new HandlerStack($mock),
+        ]);
+
+        $connections = $client->getConnections();
+        $this->assertEquals($expectedCount, count($connections));
+    }
+
+    /**
      * @return array
      */
     public function invalidOptionsExceptionProvider()
@@ -247,6 +278,34 @@ class XeroClientTest extends XeroClientTestBase
                 $this->createGuid() .
                 '</BrandingThemeID><Name>Standard</Name><SortOrder>0</SortOrder><CreatedDateUTC>2010-06-29T18:16:36.27</CreatedDateUTC></BrandingTheme></BrandingThemes>',
             ]
+        ];
+    }
+
+    /**
+     * Test responses for the connections endpoint.
+     *
+     * @return array
+     *   An array of test cases and arguments.
+     */
+    public function connectionsResponseProvider()
+    {
+        return [
+            'returns tenants' => [200, [
+                [
+                    'id' => $this->createGuid(),
+                    'tenantId' => $this->createGuid(),
+                    'tenantType' => 'ORGANISATION',
+                    'createdDateUtc' => '2020-02-02T19:17:58.1117990',
+                    'updatedDateUtc' => '2020-02-02T19:17:58.1117990',
+                ],
+                [
+                  'id' => $this->createGuid(),
+                  'tenantId' => $this->createGuid(),
+                  'tenantType' => 'ORGANISATION',
+                  'createdDateUtc' => '2020-01-30T01:33:36.2717380',
+                  'updatedDateUtc' => '2020-02-02T19:21:08.5739590',
+                ],
+            ], 2],
         ];
     }
 }

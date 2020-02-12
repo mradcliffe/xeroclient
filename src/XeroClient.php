@@ -87,6 +87,10 @@ class XeroClient extends Client implements XeroClientInterface
                 throw new InvalidOptionsException('Missing required parameter auth_token');
             }
             $options['headers']['Authorization'] = 'Bearer ' . $config['auth_token'];
+
+            if (isset($config['tenant'])) {
+                $options['headers']['xero-tenant-id'] = $config['tenant'];
+            }
         } else {
             throw new InvalidOptionsException('Invalid scheme provided');
         }
@@ -246,13 +250,36 @@ class XeroClient extends Client implements XeroClientInterface
 
     /**
      * {@inheritdoc}
+     */
+    public function getConnections()
+    {
+        try {
+            $response = $this->get('https://api.xero.com/connections', ['Content-Type' => 'application/json']);
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (RequestException $e) {
+            if ($e->getCode() >= 400) {
+                throw $e;
+            }
+            return [];
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      * @throws \GuzzleHttp\Exception\ClientException
      */
-    public static function createFromToken($id, $secret, $token, $grant = null, $api = 'accounting', array $options = [], array $collaborators = [])
-    {
+    public static function createFromToken(
+        $id,
+        $secret,
+        $token,
+        $grant = null,
+        $api = 'accounting',
+        array $options = [],
+        array $collaborators = []
+    ) {
         if ($grant !== null) {
             // Fetch a new access token from a refresh token.
             $provider = new XeroProvider([
