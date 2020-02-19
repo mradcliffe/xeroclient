@@ -277,7 +277,8 @@ class XeroClient extends Client implements XeroClientInterface
         $grant = null,
         $api = 'accounting',
         array $options = [],
-        array $collaborators = []
+        array $collaborators = [],
+        $redirectUri = ''
     ) {
         if ($grant !== null) {
             // Fetch a new access token from a refresh token.
@@ -285,6 +286,7 @@ class XeroClient extends Client implements XeroClientInterface
                 'clientId' => $id,
                 'clientSecret' => $secret,
                 'scopes' => XeroProvider::getValidScopes($api),
+                'redirectUri' => $redirectUri,
             ], $collaborators);
             $token_options = [];
             if ($grant === 'refresh_token') {

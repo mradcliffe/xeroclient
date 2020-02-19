@@ -99,7 +99,8 @@ class XeroClientOAuth2Test extends XeroClientTestBase
             'refresh_token',
             'accounting',
             $options,
-            ['httpClient' => $httpClient]
+            ['httpClient' => $httpClient],
+            'https://example.com/authorize'
         );
 
         $this->assertInstanceOf('\Radcliffe\Xero\XeroClient', $client);
@@ -132,7 +133,9 @@ class XeroClientOAuth2Test extends XeroClientTestBase
             $token,
             null,
             'accounting',
-            $options
+            $options,
+            [],
+            'https://example.com/authorize'
         );
 
         $this->assertInstanceOf('\Radcliffe\Xero\XeroClient', $client);

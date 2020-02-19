@@ -127,6 +127,8 @@ interface XeroClientInterface
      *   Any additional options to pass to the constructor.
      * @param array $collaborators
      *   Collaborator options to pass-through to the provider initialize method.
+     * @param string $redirectUri
+     *   The redirect uri corresponding to the Xero application.
      *
      * @see \League\OAuth2\Client\Provider\AbstractProvider::__construct()
      *
@@ -139,6 +141,7 @@ interface XeroClientInterface
         $grant = null,
         $api = 'accounting',
         array $options = [],
-        array $collaborators = []
+        array $collaborators = [],
+        $redirectUri = ''
     );
 }

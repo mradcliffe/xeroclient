@@ -49,7 +49,16 @@ $tokens = $client->getRefreshedToken();
 ### Create a guzzle client with an access token
 
 ```php
-$client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my consumer secret', 'my access token');
+$client = \Radcliffe\Xero\XeroClient::createFromToken(
+	'my consumer key',
+	'my consumer secret',
+	'my access token',
+	null,
+	'accounting',
+	[],
+	[],
+	'https://example.com/path/to/my/xero/callback'
+);
 ```
 
 ### Create a guzzle client with a refresh token
@@ -57,7 +66,16 @@ $client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my con
 Access tokens expire after 30 minutes so you can create a new client with a stored refresh token too.
 
 ```php
-$client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my consumer secret', 'my request token', 'request_token', 'accounting');
+$client = \Radcliffe\Xero\XeroClient::createFromToken(
+	'my consumer key',
+	'my consumer secret',
+	'my request token',
+	'request_token',
+	'accounting',
+	[],
+	[],
+	https://example.com/path/to/my/xero/callback'
+);
 // Get the refreshed tokens and store it somewhere.
 $tokens = $client->getRefreshedToken();
 ```
