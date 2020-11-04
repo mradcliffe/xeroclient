@@ -100,7 +100,7 @@ class XeroProvider extends AbstractProvider
         $error = 'An unknown error occurred with this request';
         if ($data !== null && isset($data['error'])) {
             if (isset($this->errorMap[$data['error']])) {
-                $error = $data['error'];
+                $error = $this->errorMap[$data['error']];
             } else {
                 $error = 'Unknown error code ' . $data['error'];
             }

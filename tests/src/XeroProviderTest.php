@@ -2,6 +2,7 @@
 
 namespace Radcliffe\Tests\Xero;
 
+use Prophecy\Argument;
 use Radcliffe\Xero\XeroProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -84,6 +85,55 @@ class XeroProviderTest extends TestCase
             [['offline_access', 'paymentservices', 'bankfeeds'], 'restricted'],
             [['offline_access', 'assets', 'assets.read'], 'assets'],
             [['accounting.transactions.read', 'accounting.reports.read'], 'custom'],
+        ];
+    }
+
+    /**
+     * Asserts that response errors are mapped correctly.
+     *
+     * @param array $data
+     *   The method parameter.
+     * @param string $expected
+     *   The expect error string.
+     *
+     * @dataProvider provideResponseData
+     *
+     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     */
+    public function testGetResponseMessage(array $data, string $expected)
+    {
+        $json = json_encode($data);
+        $this->expectExceptionMessage($expected);
+
+        $requestProphet = $this->prophesize('\Psr\Http\Message\RequestInterface');
+        $responseProphet = $this->prophesize('\Psr\Http\Message\ResponseInterface');
+        $responseProphet->getStatusCode()->willReturn(400);
+        $responseProphet->getBody()->willReturn($json);
+        $responseProphet
+            ->getHeader(Argument::containingString('content-type'))
+            ->willReturn('application/json');
+        $guzzleProphet = $this->prophesize('\GuzzleHttp\ClientInterface');
+        $guzzleProphet->send(Argument::any())->willReturn($responseProphet->reveal());
+
+        $provider = new XeroProvider();
+        $provider->setHttpClient($guzzleProphet->reveal());
+        $provider->getParsedResponse($requestProphet->reveal());
+    }
+
+    /**
+     * Provides test arguments for ::testGetResponseMessage().
+     *
+     * @return array
+     */
+    public function provideResponseData()
+    {
+        return [
+          'invalid client' => [['error' => 'invalid_client'], 'Invalid client credentials'],
+          'unspported grant type' => [['error' => 'unsupported_grant_type'], 'Missing required grant_type parameter'],
+          'invalid grant' => [['error' => 'invalid_grant'], 'Invalid, expired, or already used code'],
+          'unauthorized' => [['error' => 'unauthorized_client'], 'Invalid callback URI'],
+          'unknown' => [['error' => 'unknown'], 'Unknown error code unknown'],
+          'when null' => [[], 'An unknown error occurred with this request'],
         ];
     }
 }
