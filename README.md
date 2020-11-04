@@ -70,11 +70,11 @@ $client = \Radcliffe\Xero\XeroClient::createFromToken(
 	'my consumer key',
 	'my consumer secret',
 	'my request token',
-	'request_token',
+	'refresh_token',
 	'accounting',
 	[],
 	[],
-	https://example.com/path/to/my/xero/callback'
+	'https://example.com/path/to/my/xero/callback'
 );
 // Get the refreshed tokens and store it somewhere.
 $tokens = $client->getRefreshedToken();
