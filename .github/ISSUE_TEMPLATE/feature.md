@@ -10,7 +10,7 @@ assignees: ''
 Issue   | Metadata
 ------- | -------------------------------
 Type    | **feature**
-Version | **master**
+Version | **main**
 
 ### Problem/Motivation
 
