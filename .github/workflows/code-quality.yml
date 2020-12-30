@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 1
 
       - name: Setup PHP with Xdebug
-        run: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v2
         with:
           php-versions: ${{ matrix.php-versions }}
           coverage: xdebug
