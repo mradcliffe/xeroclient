@@ -5,6 +5,7 @@ namespace Radcliffe\Tests\Xero;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Radcliffe\Xero\Exception\InvalidOptionsException;
 use Radcliffe\Xero\XeroClient;
 
 /**
@@ -20,10 +21,10 @@ class XeroClientTest extends XeroClientTestBase
      *   Invalid options to pass to the consructor.
      *
      * @dataProvider invalidOptionsExceptionProvider
-     * @expectedException \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testInvalidOptionsException($options)
     {
+        $this->expectException(InvalidOptionsException::class);
         $client = new XeroClient($options);
 
         $this->assertNull($client);
@@ -31,8 +32,6 @@ class XeroClientTest extends XeroClientTestBase
 
     /**
      * Asserts private application instantiation.
-     *
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testPrivateApplication()
     {
@@ -43,8 +42,6 @@ class XeroClientTest extends XeroClientTestBase
 
     /**
      * Asserts public application instantiation.
-     *
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testPublicApplication()
     {
@@ -130,11 +127,10 @@ class XeroClientTest extends XeroClientTestBase
 
     /**
      * Tests trying to use an unreadable file.
-     *
-     * @expectedException \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testUnreadableFile()
     {
+        $this->expectException(InvalidOptionsException::class);
         $path = __DIR__ . '/../fixtures/notreadable.pem';
         $options = [
             'base_uri' => 'https://api.xero.com/api.xro/2.0/',

@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Radcliffe\Xero\XeroClient;
 
 /**
@@ -21,7 +22,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->clientId = $this->createRandomString();
         $this->clientSecret = $this->createRandomString();
@@ -29,8 +30,6 @@ class XeroClientOAuth2Test extends XeroClientTestBase
 
     /**
      * Tests that an exception is thrown for Xero API 403 status code.
-     *
-     * @expectedException \League\Oauth2\CLient\Provider\Exception\IdentityProviderException
      */
     public function testCreateFromTokenError()
     {
@@ -44,6 +43,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
         ]);
         $options = ['handler' => new HandlerStack($mock)];
         $httpClient = new Client($options);
+        $this->expectException(IdentityProviderException::class);
 
         XeroClient::createFromToken(
             $this->clientId,

@@ -2,6 +2,8 @@
 
 namespace Radcliffe\Tests\Xero;
 
+use Radcliffe\Xero\Exception\InvalidOptionsException;
+
 class XeroHelperTraitTest extends XeroClientTestBase
 {
 
@@ -108,27 +110,25 @@ class XeroHelperTraitTest extends XeroClientTestBase
 
     /**
      * Assert that invalid operator throughs an exception.
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testInvalidAddCondition()
     {
         /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
         $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
 
+        $this->expectException(\InvalidArgumentException::class);
         $mock->addCondition('Name', 'Value', '<>');
     }
 
     /**
      * Assert that exception thrown for invalid logical operator.
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testInvalidLogicalOperator()
     {
         /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
         $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
 
+        $this->expectException(\InvalidArgumentException::class);
         $mock->addOperator('NOT');
     }
 

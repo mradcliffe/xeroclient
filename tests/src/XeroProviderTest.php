@@ -3,11 +3,22 @@
 namespace Radcliffe\Tests\Xero;
 
 use Prophecy\Argument;
+use Prophecy\Prophet;
 use Radcliffe\Xero\XeroProvider;
 use PHPUnit\Framework\TestCase;
 
 class XeroProviderTest extends TestCase
 {
+    protected $prophet;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp(): void
+    {
+        $this->prophet = new Prophet();
+    }
+
     /**
      * Asserts that the valid scopes are returned based on the api.
      *
@@ -105,14 +116,14 @@ class XeroProviderTest extends TestCase
         $json = json_encode($data);
         $this->expectExceptionMessage($expected);
 
-        $requestProphet = $this->prophesize('\Psr\Http\Message\RequestInterface');
-        $responseProphet = $this->prophesize('\Psr\Http\Message\ResponseInterface');
+        $requestProphet = $this->prophet->prophesize('\Psr\Http\Message\RequestInterface');
+        $responseProphet = $this->prophet->prophesize('\Psr\Http\Message\ResponseInterface');
         $responseProphet->getStatusCode()->willReturn(400);
         $responseProphet->getBody()->willReturn($json);
         $responseProphet
             ->getHeader(Argument::containingString('content-type'))
             ->willReturn('application/json');
-        $guzzleProphet = $this->prophesize('\GuzzleHttp\ClientInterface');
+        $guzzleProphet = $this->prophet->prophesize('\GuzzleHttp\ClientInterface');
         $guzzleProphet->send(Argument::any())->willReturn($responseProphet->reveal());
 
         $provider = new XeroProvider();
