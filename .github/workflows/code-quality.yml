@@ -14,17 +14,24 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        php: [7.3, 7.4]
+        php-versions: [7.3, 7.4]
         experimental: [false]
         include:
-          - php: 8.0
+          - php-versions: 8.0
             experimental: true
-          - php: 7.2
+          - php-versions: 7.2
             experimental: true
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+
+      - name: Setup PHP with Xdebug
+        run: shivammathur/setup-php@v2
+        with:
+          php-versions: ${{ matrix.php-versions }}
+          coverage: xdebug
+          extensions: json
 
       - name: Validate composer.json and composer.lock
         run: composer validate
@@ -40,11 +47,8 @@ jobs:
         if: steps.composer-cache.outputs.cache-hit != 'true'
         run: composer install --no-progress --no-suggest
 
-      - name: Run tests
-        run: vendor/bin/phpunit --coverage-text=coverage.txt
-
       - name: Run code sniffer
         run: vendor/bin/phpcs --report-summary --report-gitblame .
 
-      - name: Output coverage results
-        run: head covearge.txt
+      - name: Run tests
+        run: vendor/bin/phpunit --coverage-text
