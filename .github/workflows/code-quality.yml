@@ -1,0 +1,43 @@
+name: code-quality
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [7.2, 7.3, 7.4, 8.0]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install --no-progress --no-suggest
+
+      - name: Run tests
+        run: vendor/bin/phpunit --coverage-text=coverage.txt
+
+      - name: Run code sniffer
+        run: vendor/bin/phpcs --report-summary --report-gitblame .
+
+      - name: Output coverage results
+        run: head covearge.txt
