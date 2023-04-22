@@ -17,7 +17,8 @@ class XeroClientTestBase extends TestCase
      *   The API to use: accounting or payroll.
      * @param string $application
      *   The application type: private, public or partner.
-     * @return array
+     *
+     * @return array<string,string>
      *   An associative array of configuration options with the following keys:
      *   - base_uri: An API URL.
      *   - consumer_key: A 32-character long sring.
@@ -25,7 +26,7 @@ class XeroClientTestBase extends TestCase
      *   - private_key: File path to the private key.
      *   - application: private or public.
      */
-    protected function createConfiguration($api = 'accounting', $application = 'private')
+    protected function createConfiguration(string $api = 'accounting', string $application = 'private'): array
     {
         $base_uri = 'https://api.xero.com/payroll.xro/1.0/';
         if ($api === 'accounting') {
@@ -56,7 +57,7 @@ class XeroClientTestBase extends TestCase
      * @return string
      *   A globally-unique identifier.
      */
-    protected function createGuid()
+    protected function createGuid(): string
     {
         $hash = strtoupper(hash('ripemd128', md5(openssl_random_pseudo_bytes(100))));
         $guid = substr($hash, 0, 8) . '-' . substr($hash, 8, 4) . '-' . substr($hash, 12, 4);
@@ -73,12 +74,12 @@ class XeroClientTestBase extends TestCase
      * @return string
      *   A random string of characters.
      */
-    protected function createRandomString($length = 30)
+    protected function createRandomString(int $length = 30): string
     {
         if ($length > 255) {
             throw new \InvalidArgumentException('Maximum number is 100.');
         }
 
-        return substr(base64_encode(sha1(mt_rand())), 0, $length);
+        return substr(base64_encode(sha1((string) mt_rand())), 0, $length);
     }
 }

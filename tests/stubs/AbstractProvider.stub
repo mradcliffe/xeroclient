@@ -1,0 +1,30 @@
+<?php
+
+namespace League\OAuth2\Client\Provider;
+
+abstract class AbstractProvider
+{
+    /**
+     * @param array<string, mixed> $params
+     */
+    abstract public function getBaseAccessTokenUrl(array $params): string;
+
+    /**
+     * @return string[]
+     */
+    abstract public function getDefaultScopes(): array;
+
+    /**
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param mixed $data
+     */
+    abstract public function checkResponse($response, $data): void;
+
+    /**
+     * @param mixed[] $response
+     * @param \League\OAuth2\Client\Token\AccessToken $token
+     *
+     * @return \League\OAuth2\Client\Provider\ResourceOwnerInterface
+     */
+    abstract public function createResourceOwner(array $response, $token);
+}

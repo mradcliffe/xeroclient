@@ -17,12 +17,12 @@ class XeroClientTest extends XeroClientTestBase
 {
 
     /**
-     * @param array $options
+     * @param array<string,mixed> $options
      *   Invalid options to pass to the consructor.
      *
      * @dataProvider invalidOptionsExceptionProvider
      */
-    public function testInvalidOptionsException($options)
+    public function testInvalidOptionsException(array $options): void
     {
         $this->expectException(InvalidOptionsException::class);
         $client = new XeroClient($options);
@@ -33,7 +33,7 @@ class XeroClientTest extends XeroClientTestBase
     /**
      * Asserts private application instantiation.
      */
-    public function testPrivateApplication()
+    public function testPrivateApplication(): void
     {
         $options = $this->createConfiguration();
         $client = new XeroClient($options);
@@ -43,7 +43,7 @@ class XeroClientTest extends XeroClientTestBase
     /**
      * Asserts public application instantiation.
      */
-    public function testPublicApplication()
+    public function testPublicApplication(): void
     {
         $options = $this->createConfiguration('accounting', 'public');
         $client = new XeroClient($options);
@@ -53,7 +53,7 @@ class XeroClientTest extends XeroClientTestBase
     /**
      * Asserts get request token.
      */
-    public function testGetRequestToken()
+    public function testGetRequestToken(): void
     {
         $options = $this->createConfiguration('accounting', 'public');
         $expected = ['oauth_token' => $options['token'], 'oauth_secret' => $options['token_secret']];
@@ -72,7 +72,7 @@ class XeroClientTest extends XeroClientTestBase
     /**
      * Asserts getting an access token.
      */
-    public function testGetAccessToken()
+    public function testGetAccessToken(): void
     {
         $expected = [
             'oauth_token' => $this->createRandomString(),
@@ -101,15 +101,15 @@ class XeroClientTest extends XeroClientTestBase
     }
 
     /**
-     * @param $statusCode
-     * @param $headers
-     * @param $body
+     * @param int $statusCode
+     * @param array<string,string> $headers
+     * @param string $body
      *
      * @dataProvider providerGetTest
      *
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
-    public function testGet($statusCode, $headers, $body)
+    public function testGet(int $statusCode, array $headers, string $body): void
     {
         $options = $this->createConfiguration();
         $mock = new MockHandler(
@@ -128,7 +128,7 @@ class XeroClientTest extends XeroClientTestBase
     /**
      * Tests trying to use an unreadable file.
      */
-    public function testUnreadableFile()
+    public function testUnreadableFile(): void
     {
         $this->expectException(InvalidOptionsException::class);
         $path = __DIR__ . '/../fixtures/notreadable.pem';
@@ -152,7 +152,7 @@ class XeroClientTest extends XeroClientTestBase
      *
      * @param int $statusCode
      *   The HTTP status code to mock.
-     * @param array $response
+     * @param array<string|int,mixed> $response
      *   The response body to encode as json.
      * @param int $expectedCount
      *   The expected number of connections.
@@ -160,7 +160,7 @@ class XeroClientTest extends XeroClientTestBase
      * @dataProvider connectionsResponseProvider
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
-    public function testGetConnections($statusCode, array $response, $expectedCount)
+    public function testGetConnections(int $statusCode, array $response, int $expectedCount): void
     {
         $mock = new MockHandler([
             new Response($statusCode, [
@@ -179,9 +179,9 @@ class XeroClientTest extends XeroClientTestBase
     }
 
     /**
-     * @return array
+     * @return array<int,mixed>
      */
-    public function invalidOptionsExceptionProvider()
+    public function invalidOptionsExceptionProvider(): array
     {
         return [
             [[]],
@@ -263,8 +263,10 @@ class XeroClientTest extends XeroClientTestBase
 
     /**
      * Provide responses for get method.
+     *
+     * @return array<int,mixed>
      */
-    public function providerGetTest()
+    public function providerGetTest(): array
     {
         return [
             [
@@ -281,10 +283,10 @@ class XeroClientTest extends XeroClientTestBase
     /**
      * Test responses for the connections endpoint.
      *
-     * @return array
+     * @return array<string,mixed>
      *   An array of test cases and arguments.
      */
-    public function connectionsResponseProvider()
+    public function connectionsResponseProvider(): array
     {
         return [
             'returns tenants' => [200, [

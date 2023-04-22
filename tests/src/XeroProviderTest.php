@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class XeroProviderTest extends TestCase
 {
-    protected $prophet;
+    protected Prophet $prophet;
 
     /**
      * {@inheritdoc}
@@ -22,14 +22,14 @@ class XeroProviderTest extends TestCase
     /**
      * Asserts that the valid scopes are returned based on the api.
      *
-     * @param array $expected
+     * @param string[] $expected
      *   The expected result.
      * @param string $api
      *   The api parameter.
      *
      * @dataProvider validScopesProvider
      */
-    public function testGetValidScopes(array $expected, $api = '')
+    public function testGetValidScopes(array $expected, string $api = ''): void
     {
         $custom = [];
         if ($api === 'custom') {
@@ -38,7 +38,10 @@ class XeroProviderTest extends TestCase
         $this->assertEquals($expected, XeroProvider::getValidScopes($api, $custom));
     }
 
-    public function validScopesProvider()
+    /**
+     * @return array<int,mixed>
+     */
+    public function validScopesProvider(): array
     {
         return [
             [['offline_access'], null],
@@ -102,7 +105,7 @@ class XeroProviderTest extends TestCase
     /**
      * Asserts that response errors are mapped correctly.
      *
-     * @param array $data
+     * @param array<int|string,mixed> $data
      *   The method parameter.
      * @param string $expected
      *   The expect error string.
@@ -111,7 +114,7 @@ class XeroProviderTest extends TestCase
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
      */
-    public function testGetResponseMessage(array $data, string $expected)
+    public function testGetResponseMessage(array $data, string $expected): void
     {
         $json = json_encode($data);
         $this->expectExceptionMessage($expected);
@@ -134,9 +137,9 @@ class XeroProviderTest extends TestCase
     /**
      * Provides test arguments for ::testGetResponseMessage().
      *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function provideResponseData()
+    public function provideResponseData(): array
     {
         return [
           'invalid client' => [['error' => 'invalid_client'], 'Invalid client credentials'],

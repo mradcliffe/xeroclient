@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @method InvocationMocker method($constraint)
+ */
+interface MockObject {}

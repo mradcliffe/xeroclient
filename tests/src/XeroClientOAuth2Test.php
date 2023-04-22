@@ -16,8 +16,8 @@ use Radcliffe\Xero\XeroClient;
  */
 class XeroClientOAuth2Test extends XeroClientTestBase
 {
-    protected $clientId;
-    protected $clientSecret;
+    protected string $clientId;
+    protected string $clientSecret;
 
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
     /**
      * Tests that an exception is thrown for Xero API 403 status code.
      */
-    public function testCreateFromTokenError()
+    public function testCreateFromTokenError(): void
     {
         $mock = new MockHandler([
             new Response(403, ['Content-Type' => 'application/json'], json_encode([
@@ -62,7 +62,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
-    public function testCreateFromRefreshToken()
+    public function testCreateFromRefreshToken(): void
     {
         $token = $this->createRandomString(30);
         $refresh_token = $this->createRandomString(30);
@@ -112,7 +112,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
-    public function testCreateFromAccessToken()
+    public function testCreateFromAccessToken(): void
     {
         $token = $this->createRandomString(30);
         $tenantIdResponse = json_encode([

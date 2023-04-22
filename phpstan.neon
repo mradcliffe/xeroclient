@@ -1,0 +1,18 @@
+parameters:
+  level: 6
+  excludePaths:
+    - .github/
+    - coverage/
+    - vendor/
+    - tests/stubs
+    - tests/fixtures
+  ignoreErrors:
+    - '#Unsafe usage of new static\(\)#'
+    -
+        message: '#Call to an undefined method (PHPUnit|Prophecy)*#'
+        path: 'tests/src/*'
+  stubFiles:
+    - tests/stubs/AbstractProvider.stub
+    - tests/stubs/AccessToken.stub
+    - tests/stubs/ResourceOwnerInterface.stub
+    - tests/stubs/ResponseInterface.stub
