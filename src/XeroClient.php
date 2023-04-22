@@ -3,8 +3,10 @@
 namespace Radcliffe\Xero;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use Radcliffe\Xero\Exception\InvalidOptionsException;
 
 class XeroClient extends Client implements XeroClientInterface
@@ -14,17 +16,17 @@ class XeroClient extends Client implements XeroClientInterface
     *
     * @var string[]
     */
-    protected $tenantIds = [];
+    protected array $tenantIds = [];
 
     /**
-     * @var
+     * @var \League\OAuth2\Client\Token\AccessTokenInterface|null
      */
-    protected $refreshedToken = null;
+    protected ?AccessTokenInterface $refreshedToken = null;
 
     /**
      * {@inheritdoc}
      */
-    public static function getValidUrls()
+    public static function getValidUrls(): array
     {
         return [
             'https://identity.xero.com/connect/token',
@@ -37,12 +39,18 @@ class XeroClient extends Client implements XeroClientInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Initialization method.
+     *
+     * @param array<string,mixed> $config
+     *   The guzzle options.
+     *
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
+     * @see \GuzzleHttp\Client::__construct().
      */
-    public function __construct(array $config)
+    public function __construct(array $config = [])
     {
-        $options = isset($config['options']) ? $config['options'] : [];
-        $scheme = isset($config['scheme']) ? $config['scheme'] : 'oauth1';
+        $options = $config['options'] ?? [];
+        $scheme = $config['scheme'] ?? 'oauth1';
         $auth = $scheme === 'oauth1' ? 'oauth' : null;
 
         if (!isset($config['base_uri']) ||
@@ -114,15 +122,16 @@ class XeroClient extends Client implements XeroClientInterface
     /**
      * {@inheritdoc}
      */
-    public function isValidUrl($base_uri)
+    public function isValidUrl($base_uri): bool
     {
-        return in_array($base_uri, $this->getValidUrls()) || strpos($base_uri, 'https://api.xero.com/oauth') === 0;
+        return in_array($base_uri, $this->getValidUrls()) ||
+          str_starts_with($base_uri, 'https://api.xero.com/oauth');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isValidPrivateKey($filename)
+    public function isValidPrivateKey($filename): bool
     {
         if ($filename && realpath($filename) && !is_dir($filename) && is_readable($filename)) {
             return true;
@@ -131,7 +140,7 @@ class XeroClient extends Client implements XeroClientInterface
     }
 
     /**
-     * @param array $options
+     * @param array<string,mixed> $options
      *   The options passed into the constructor.
      *
      * @return \GuzzleHttp\Subscriber\Oauth\Oauth1
@@ -139,7 +148,7 @@ class XeroClient extends Client implements XeroClientInterface
      *
      * @deprecated Deprecated since 0.2.0.
      */
-    protected function getPublicApplicationMiddleware($options)
+    protected function getPublicApplicationMiddleware(array $options): Oauth1
     {
         $oauth_options = [
             'consumer_key' => $options['consumer_key'],
@@ -166,7 +175,7 @@ class XeroClient extends Client implements XeroClientInterface
     }
 
     /**
-     * @param array $options
+     * @param array<string,mixed> $options
      *   The options passed into the constructor.
      *
      * @return \GuzzleHttp\Subscriber\Oauth\Oauth1
@@ -174,7 +183,7 @@ class XeroClient extends Client implements XeroClientInterface
      *
      * @deprecated Deprecated since 0.2.0
      */
-    protected function getPrivateApplicationMiddleware($options)
+    protected function getPrivateApplicationMiddleware(array $options): Oauth1
     {
         return new Oauth1([
             'consumer_key' => $options['consumer_key'],
@@ -189,8 +198,10 @@ class XeroClient extends Client implements XeroClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
-    public static function getRequestToken($consumer_key, $consumer_secret, $options = [])
+    public static function getRequestToken(string $consumer_key, string $consumer_secret, array $options = []): array
     {
         $config = [
                 'base_uri' => 'https://api.xero.com/oauth/',
@@ -201,7 +212,6 @@ class XeroClient extends Client implements XeroClientInterface
         $client = new static($config);
 
         $tokens = [];
-        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $client->post('/RequestToken');
         $pairs = explode('&', $response->getBody()->getContents());
         foreach ($pairs as $pair) {
@@ -214,15 +224,17 @@ class XeroClient extends Client implements XeroClientInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public static function getAccessToken(
-        $consumer_key,
-        $consumer_secret,
-        $token,
-        $token_secret,
-        $verifier,
-        $options = []
-    ) {
+        string $consumer_key,
+        string $consumer_secret,
+        string $token,
+        string $token_secret,
+        string $verifier,
+        array $options = []
+    ): array {
         $config = [
                 'base_uri' => 'https://api.xero.com/oauth/',
                 'consumer_key' => $consumer_key,
@@ -236,7 +248,6 @@ class XeroClient extends Client implements XeroClientInterface
         $client = new static($config);
 
         $tokens = [];
-        /** @var \Psr\Http\Message\ResponseInterface $response */
         $response = $client->post('/AccessToken');
         $pairs = explode('&', $response->getBody()->getContents());
         foreach ($pairs as $pair) {
@@ -250,7 +261,7 @@ class XeroClient extends Client implements XeroClientInterface
     /**
      * {@inheritdoc}
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         try {
             $response = $this->get('https://api.xero.com/connections', ['Content-Type' => 'application/json']);
@@ -271,15 +282,15 @@ class XeroClient extends Client implements XeroClientInterface
      * @throws \GuzzleHttp\Exception\ClientException
      */
     public static function createFromToken(
-        $id,
-        $secret,
-        $token,
-        $grant = null,
-        $api = 'accounting',
+        string $id,
+        string $secret,
+        string $token,
+        string $grant = null,
+        string $api = 'accounting',
         array $options = [],
         array $collaborators = [],
-        $redirectUri = ''
-    ) {
+        string $redirectUri = ''
+    ): static {
         if ($grant !== null) {
             // Fetch a new access token from a refresh token.
             $provider = new XeroProvider([
@@ -324,7 +335,7 @@ class XeroClient extends Client implements XeroClientInterface
      *
      * @return \League\OAuth2\Client\Token\AccessTokenInterface|null
      */
-    public function getRefreshedToken()
+    public function getRefreshedToken(): ?AccessTokenInterface
     {
         return $this->refreshedToken;
     }
@@ -334,7 +345,7 @@ class XeroClient extends Client implements XeroClientInterface
      *
      * @return string[]
      */
-    public function getTenantIds()
+    public function getTenantIds(): array
     {
         return $this->tenantIds;
     }

@@ -4,6 +4,7 @@ namespace Radcliffe\Xero;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Radcliffe\Xero\Exception\ResourceOwnerException;
@@ -13,14 +14,24 @@ use Radcliffe\Xero\Exception\ResourceOwnerException;
  */
 class XeroProvider extends AbstractProvider
 {
-    protected $errorMap = [
+    /**
+     * Map of error codes to English.
+     *
+     * @var array<string,string>
+     */
+    protected array $errorMap = [
         'invalid_client' => 'Invalid client credentials',
         'unsupported_grant_type' => 'Missing required grant_type parameter',
         'invalid_grant' => 'Invalid, expired, or already used code',
         'unauthorized_client' => 'Invalid callback URI',
     ];
 
-    public static $validScopes = [
+    /**
+     * Defines a list of oauth2 scopes.
+     *
+     * @var string[]
+     */
+    public static array $validScopes = [
       'offline_access', 'openid', 'profile', 'email', 'accounting.transactions', 'accounting.transactions.read',
       'accounting.reports.read', 'accounting.journals.read', 'accounting.settings', 'accounting.settings.read',
       'accounting.contacts',  'accounting.contacts.read', 'accounting.attachments', 'accounting.attachments.read',
@@ -33,7 +44,7 @@ class XeroProvider extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getBaseAuthorizationUrl()
+    public function getBaseAuthorizationUrl(): string
     {
         return 'https://login.xero.com/identity/connect/authorize';
     }
@@ -41,7 +52,7 @@ class XeroProvider extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl(array $params): string
     {
         return 'https://identity.xero.com/connect/token';
     }
@@ -51,7 +62,7 @@ class XeroProvider extends AbstractProvider
    *
    * @throws \Radcliffe\Xero\Exception\ResourceOwnerException
    */
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
         throw new ResourceOwnerException();
     }
@@ -59,7 +70,7 @@ class XeroProvider extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultScopes()
+    protected function getDefaultScopes(): array
     {
         return ['offline_access'];
     }
@@ -67,7 +78,7 @@ class XeroProvider extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    protected function checkResponse(ResponseInterface $response, $data)
+    protected function checkResponse(ResponseInterface $response, $data): void
     {
         $statusCode = $response->getStatusCode();
         if ($statusCode === 429) {
@@ -82,7 +93,7 @@ class XeroProvider extends AbstractProvider
    *
    * @throws \Radcliffe\Xero\Exception\ResourceOwnerException
    */
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response, AccessToken $token): ResourceOwnerInterface
     {
         throw new ResourceOwnerException();
     }
@@ -90,12 +101,12 @@ class XeroProvider extends AbstractProvider
     /**
      * Gets a formatted error message from an error response.
      *
-     * @param array $data
+     * @param array<string,string>|null $data
      *   The structured response message.
      *
      * @return string
      */
-    protected function getResponseMessage($data)
+    protected function getResponseMessage(?array $data): string
     {
         $error = 'An unknown error occurred with this request';
         if ($data !== null && isset($data['error'])) {
@@ -112,7 +123,7 @@ class XeroProvider extends AbstractProvider
     /**
      * {@inheritdoc}
      */
-    protected function getScopeSeparator()
+    protected function getScopeSeparator(): string
     {
         return ' ';
     }
@@ -120,14 +131,14 @@ class XeroProvider extends AbstractProvider
     /**
      * Gets the valid scopes for an API.
      *
-     * @param string $api
+     * @param string|null $api
      *   (optional) One of openid, accounting, payroll_COUNTRYID, files, assets, projects, custom, or restricted.
-     * @param array $custom
+     * @param string[] $custom
      *   (optional) Use the scopes defined here when "custom" is defined above and these scopes are valid.
      *
      * @return string[]
      */
-    public static function getValidScopes($api = '', array $custom = [])
+    public static function getValidScopes(?string $api = '', array $custom = []): array
     {
         if ($api === 'custom') {
             return array_filter($custom, [__CLASS__, 'isValidScope']);
@@ -143,7 +154,7 @@ class XeroProvider extends AbstractProvider
                 $scopes[] = "accounting.$type.read";
             }
             $scopes = array_merge($scopes, ['accounting.reports.read', 'accounting.journals.read']);
-        } elseif (substr($api, 0, 7) === 'payroll') {
+        } elseif (str_starts_with($api, 'payroll')) {
             // @todo Split the logic into au, uk, nz, and other sections as necessary.
             $types = ['employees', 'payruns', 'payslip', 'timesheets', 'settings'];
             foreach ($types as $type) {
@@ -172,7 +183,7 @@ class XeroProvider extends AbstractProvider
      * @return bool
      *   True if the scope is a valid scope for the Xero API.
      */
-    public static function isValidScope($scope)
+    public static function isValidScope(string $scope): bool
     {
         return in_array($scope, static::$validScopes);
     }

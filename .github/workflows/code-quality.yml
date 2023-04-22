@@ -14,7 +14,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        php-versions: [7.3, 7.4, 8.0, 8.1]
+        php-versions: [8.0, 8.1, 8.2]
         experimental: [false]
     steps:
       - uses: actions/checkout@v2
@@ -44,6 +44,9 @@ jobs:
 
       - name: Run code sniffer
         run: vendor/bin/phpcs --report-summary --report-gitblame .
+
+      - name: Run code static analysis
+        run: vendor/bin/phpstan analyse src tests
 
       - name: Run tests
         run: vendor/bin/phpunit --coverage-text
