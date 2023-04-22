@@ -24,12 +24,12 @@ class XeroProviderTest extends TestCase
      *
      * @param string[] $expected
      *   The expected result.
-     * @param string $api
+     * @param string|null $api
      *   The api parameter.
      *
      * @dataProvider validScopesProvider
      */
-    public function testGetValidScopes(array $expected, string $api = ''): void
+    public function testGetValidScopes(array $expected, ?string $api = ''): void
     {
         $custom = [];
         if ($api === 'custom') {

@@ -28,7 +28,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *
      * @param string $field
      *   The field parameter.
-     * @param string $value
+     * @param bool|int|string $value
      *   The value parameter.
      * @param string $operator
      *   The operator parameter.
@@ -37,7 +37,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *
      * @dataProvider addConditionProvider
      */
-    public function testAddCondition(string $field, string $value, string $operator, array $expected): void
+    public function testAddCondition(string $field, bool|int|string $value, string $operator, array $expected): void
     {
         /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
         $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
@@ -70,14 +70,14 @@ class XeroHelperTraitTest extends XeroClientTestBase
     /**
      * Assert that conditions can be compiled into a query string.
      *
-     * @param string[] $conditions
+     * @param string[][] $conditions
      *   An array of conditions.
-     * @param string $expected
+     * @param string[] $expected
      *   The expected value.
      *
      * @dataProvider compileConditionsProvider
      */
-    public function testCompileConditions(array $conditions, string $expected): void
+    public function testCompileConditions(array $conditions, array $expected): void
     {
         /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
         $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');

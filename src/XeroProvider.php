@@ -131,14 +131,14 @@ class XeroProvider extends AbstractProvider
     /**
      * Gets the valid scopes for an API.
      *
-     * @param string $api
+     * @param string|null $api
      *   (optional) One of openid, accounting, payroll_COUNTRYID, files, assets, projects, custom, or restricted.
      * @param string[] $custom
      *   (optional) Use the scopes defined here when "custom" is defined above and these scopes are valid.
      *
      * @return string[]
      */
-    public static function getValidScopes(string $api = '', array $custom = []): array
+    public static function getValidScopes(?string $api = '', array $custom = []): array
     {
         if ($api === 'custom') {
             return array_filter($custom, [__CLASS__, 'isValidScope']);
