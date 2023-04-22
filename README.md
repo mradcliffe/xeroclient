@@ -15,7 +15,7 @@ Ultimately it is up to the software that uses xeroclient to deal with [serializa
 
 ## Dependencies
 
-* PHP 7.0 or greater
+* PHP 8.0 or greater
 * (Deprecated) [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
 * [league/oauth2-client](https://packagist.org/packages/league/oauth2-client)
 * [guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
