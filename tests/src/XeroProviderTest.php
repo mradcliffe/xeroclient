@@ -41,7 +41,7 @@ class XeroProviderTest extends TestCase
     /**
      * @return array<int,mixed>
      */
-    public function validScopesProvider(): array
+    public static function validScopesProvider(): array
     {
         return [
             [['offline_access'], null],
@@ -143,7 +143,7 @@ class XeroProviderTest extends TestCase
      *
      * @return array<string,mixed>
      */
-    public function provideResponseData(): array
+    public static function provideResponseData(): array
     {
         return [
           'invalid client' => [['error' => 'invalid_client'], 'Invalid client credentials'],
