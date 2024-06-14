@@ -6,10 +6,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use Radcliffe\Xero\Exception\InvalidOptionsException;
+use Radcliffe\Xero\Exception\XeroRequestException;
 
 class XeroClient implements XeroClientInterface
 {
@@ -90,22 +92,10 @@ class XeroClient implements XeroClientInterface
      *
      * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
-    public static function createFromConfig(array $config): static
+    public static function createFromConfig(array $config, array $options = []): static
     {
-        if (!isset($config['base_uri']) ||
-          !$config['base_uri'] ||
-          !in_array($config['base_uri'], self::getValidUrls())) {
-            throw new InvalidOptionsException('API URL is not valid.');
-        }
-
-        // Use OAuth2 work flow.
-        if (!isset($config['auth_token'])) {
-            throw new InvalidOptionsException('Missing required parameter auth_token');
-        }
-        $options['headers']['Authorization'] = 'Bearer ' . $config['auth_token'];
-
-        if (isset($config['tenant'])) {
-            $options['headers']['xero-tenant-id'] = $config['tenant'];
+        if (isset($options['tenant'])) {
+            $config['headers']['xero-tenant-id'] = $options['tenant'];
         }
 
         if (isset($config['handler']) && is_a($config['handler'], '\GuzzleHttp\HandlerStack')) {
@@ -113,6 +103,18 @@ class XeroClient implements XeroClientInterface
         } else {
             $stack = HandlerStack::create();
         }
+
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request) use ($options) {
+            $validUrls = array_filter(self::getValidUrls(), fn ($url) => str_starts_with($request->getUri(), $url));
+            if (empty($validUrls)) {
+                throw new XeroRequestException('API URL is not valid', $request);
+            }
+
+            if (!isset($options['auth_token'])) {
+                throw new XeroRequestException('Missing required parameter auth_token', $request);
+            }
+            return $request->withHeader('Authorization', 'Bearer ' . $options['auth_token']);
+        }));
 
         $client = new Client($config + [
             'handler' => $stack,
@@ -160,9 +162,7 @@ class XeroClient implements XeroClientInterface
         }
 
         // Create a new static instance.
-        $instance = self::createFromConfig($options + [
-            'auth_token' => $token,
-        ]);
+        $instance = self::createFromConfig($options, ['auth_token' => $token]);
 
         $instance->tenantIds = $instance->getConnections();
 

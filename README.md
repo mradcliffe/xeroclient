@@ -37,7 +37,7 @@ $provider = new \Radcliffe\Xero\XeroProvider([
 $url = $provider->getAuthorizationUrl();
 ```
 
-### Create a guzzle client from an authorization code (see above)
+### Create with a guzzle client from an authorization code (see above)
 
 ```php
 $client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my consumer secret', $code, 'authorization_code', 'accounting');
@@ -45,7 +45,7 @@ $client = \Radcliffe\Xero\XeroClient::createFromToken('my consumer key', 'my con
 $tokens = $client->getRefreshedToken();
 ```
 
-### Create a guzzle client with an access token
+### Create with a guzzle client with an access token
 
 ```php
 $client = \Radcliffe\Xero\XeroClient::createFromToken(
@@ -60,7 +60,7 @@ $client = \Radcliffe\Xero\XeroClient::createFromToken(
 );
 ```
 
-### Create a guzzle client with a refresh token
+### Create with a guzzle client with a refresh token
 
 Access tokens expire after 30 minutes so you can create a new client with a stored refresh token too.
 
@@ -96,6 +96,12 @@ try {
 }
 
 ```
+
+### Error handling
+
+If the configured client does not have a valid Xero API URL or if an auth_token is not provided, then XeroRequestException is thrown as part of the Guzzle request.
+
+Previously XeroClient would throw an exception on instantiation, but this is no longer the case. If the initialize method is used directly, XeroClient will probably fail for other reasons.
 
 ### Use with a legacy OAuth1 application
 

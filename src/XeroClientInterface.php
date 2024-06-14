@@ -94,12 +94,16 @@ interface XeroClientInterface
      *
      * @param array<string,mixed> $config
      *   The guzzle options.
+     * @param array<string,mixed> $options
+     *   The XeroClient Options:
+     *     - auth_token: the access or refresh token.
+     *     - tenant: an optional tenant id.
      *
      * @return static
      *
      * @see \GuzzleHttp\Client::__construct().
      */
-    public static function createFromConfig(array $config): static;
+    public static function createFromConfig(array $config, array $options = []): static;
 
     /**
      * Makes a request to the Xero API.

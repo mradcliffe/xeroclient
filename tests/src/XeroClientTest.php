@@ -5,7 +5,6 @@ namespace Radcliffe\Tests\Xero;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Radcliffe\Xero\Exception\InvalidOptionsException;
 use Radcliffe\Xero\XeroClient;
 
 /**
@@ -17,27 +16,13 @@ class XeroClientTest extends XeroClientTestBase
 {
 
     /**
-     * @param array<string,mixed> $options
-     *   Invalid options to pass to the consructor.
-     *
-     * @dataProvider invalidOptionsExceptionProvider
-     */
-    public function testInvalidOptionsException(array $options): void
-    {
-        $this->expectException(InvalidOptionsException::class);
-        $client = XeroClient::createFromConfig($options);
-
-        $this->assertNull($client);
-    }
-
-    /**
      * Asserts public application instantiation.
      */
     public function testPublicApplication(): void
     {
         $options = $this->createConfiguration();
         $client = XeroClient::createFromConfig($options + [
-            'auth_token' => $this->createRandomString(),
+            'auth_token' => self::createRandomString(),
         ]);
         $this->assertNotNull($client);
     }
@@ -60,11 +45,12 @@ class XeroClientTest extends XeroClientTestBase
             ]
         );
         $options['handler'] = new HandlerStack($mock);
-        $options['auth_token'] = $this->createRandomString();
 
-        $client = XeroClient::createFromConfig($options);
+        $client = XeroClient::createFromConfig($options, [
+          'auth_token' => self::createRandomString(),
+        ]);
 
-        $response = $client->get('/BrandingThemes');
+        $response = $client->request('GET', 'BrandingThemes');
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -90,23 +76,32 @@ class XeroClientTest extends XeroClientTestBase
         ]);
         $client = XeroClient::createFromConfig([
           'base_uri' => 'https://api.xero.com/connections',
-          'scheme' => 'oauth2',
-          'auth_token' => $this->createRandomString(),
           'handler' => new HandlerStack($mock),
-        ]);
+        ], ['auth_token' => self::createRandomString()]);
 
         $connections = $client->getConnections();
         $this->assertEquals($expectedCount, count($connections));
     }
 
-    /**
-     * @return array<int,mixed>
-     */
-    public static function invalidOptionsExceptionProvider(): array
+    public function testWithInvalidUrl(): void
     {
-        return [
-            [[]],
-        ];
+        $this->expectException('\Radcliffe\Xero\Exception\XeroRequestException');
+
+        $options = $this->createConfiguration();
+        $options['base_uri'] = 'https://example.com/';
+        $client = XeroClient::createFromConfig($options, [
+          'auth_token' => self::createRandomString(),
+        ]);
+        $client->request('GET', 'Accounts');
+    }
+
+    public function testWithoutAuthToken(): void
+    {
+        $this->expectException('\Radcliffe\Xero\Exception\XeroRequestException');
+
+        $options = $this->createConfiguration();
+        $client = XeroClient::createFromConfig($options, []);
+        $client->request('GET', 'Accounts');
     }
 
     /**
