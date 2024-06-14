@@ -8,3 +8,5 @@ composer.lock
 /coverage
 
 example.php
+.phpunit.result.cache
+/.phpunit.cache/

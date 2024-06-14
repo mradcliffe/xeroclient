@@ -15,8 +15,7 @@ Ultimately it is up to the software that uses xeroclient to deal with [serializa
 
 ## Dependencies
 
-* PHP 8.0 or greater
-* (Deprecated) [guzzlehttp/oauth-subscriber](https://packagist.org/packages/guzzlehttp/oauth-subscriber)
+* PHP 8.1 or greater
 * [league/oauth2-client](https://packagist.org/packages/league/oauth2-client)
 * [guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
 
@@ -88,7 +87,7 @@ try {
 		'query' => ['where' => 'Name.StartsWith("John")'],
 		'headers' => ['Accept' => 'application/json'],
 	];
-	$response = $client->get('Accounts', $options);
+	$response = $client->request('GET', 'Accounts', $options);
 
 	// Or use something like Symfony Serializer component.
 	$accounts = json_decode($response->getBody()->getContents());

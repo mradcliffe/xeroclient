@@ -2,9 +2,11 @@
 
 namespace Radcliffe\Xero;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
+
 interface XeroClientInterface
 {
-
     /**
      * Get a list of valid API URLs.
      *
@@ -19,71 +21,13 @@ interface XeroClientInterface
      *
      * @return bool
      *   TRUE if the base uri is valid.
+     *
+     * @deprecated in 0.5.0 and removed in 0.6.0. The check of base_uri is now
+     *             internal to XeroClient.
+     *
+     * @see XeroClient::createFromConfig().
      */
     public function isValidUrl(string $base_uri): bool;
-
-    /**
-     * Check the private key file.
-     *
-     * @param string $filename
-     *   The file name of the private key.
-     * @return bool
-     *   TRUE if the private key is valid.
-     *
-     * @deprecated Deprecated since 0.2.0
-     */
-    public function isValidPrivateKey(string $filename): bool;
-
-    /**
-     * Get an unauthorized request token from the API.
-     *
-     * @param string $consumer_key
-     *   Consumer key.
-     * @param string $consumer_secret
-     *   Consumer secret.
-     * @param array<string,string> $options
-     *   An array of request options including other OAuth1 required properties depending on the application type.
-     *
-     * @return array<string,string>
-     *   An associative array consisting of the following keys:
-     *   - oauth_token
-     *   - oauth_secret
-     *
-     * @deprecated Deprecated since 0.2.0
-     */
-    public static function getRequestToken(string $consumer_key, string $consumer_secret, array $options = []): array;
-
-    /**
-     * Get an access token from the API.
-     *
-     * @param string $consumer_key
-     *   Consumer key.
-     * @param string $consumer_secret
-     *   Consumer secret.
-     * @param string $token
-     *   OAuth token.
-     * @param string $token_secret
-     *   Token secret from the request token.
-     * @param string $verifier
-     *   The CSRF token provided by the API.
-     * @param array<string,string> $options
-     *   An array of request options to provide to Guzzle.
-     *
-     * @return array<string,string>
-     *   An associative array consisting of the following keys:
-     *   - oauth_token
-     *   - oauth_secret
-     *
-     * @deprecated Deprecated since 0.2.0
-     */
-    public static function getAccessToken(
-        string $consumer_key,
-        string $consumer_secret,
-        string $token,
-        string $token_secret,
-        string $verifier,
-        array $options = []
-    ): array;
 
     /**
      * Get connections authorized by the user.
@@ -144,4 +88,76 @@ interface XeroClientInterface
         array $collaborators = [],
         string $redirectUri = ''
     ): static;
+
+    /**
+     * Creates an instance of XeroClient with guzzle configured from options.
+     *
+     * @param array<string,mixed> $config
+     *   The guzzle options.
+     *
+     * @return static
+     *
+     * @see \GuzzleHttp\Client::__construct().
+     */
+    public static function createFromConfig(array $config): static;
+
+    /**
+     * Makes a request to the Xero API.
+     *
+     * @param string $method
+     *   The request methad.
+     * @param string|\Psr\Http\Message\UriInterface $uri
+     *   The endpoint path.
+     * @param array<string,mixed> $options
+     *   Options to pass to the http client.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   The response from the http client.
+     */
+    public function request(string $method, string|UriInterface $uri = '', array $options = []): ResponseInterface;
+
+    /**
+     * Makes a GET request to the Xero API endpoint.
+     *
+     * @param string|\Psr\Http\Message\UriInterface $uri
+     *    The endpoint path.
+     * @param array<string,mixed> $options
+     *    Options to pass to the http client.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *    The response from the http client.
+     *
+     * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
+     */
+    public function get(string|UriInterface $uri = '', array $options = []): ResponseInterface;
+
+    /**
+     * Makes a POST request to the Xero API endpoint.
+     *
+     * @param string|\Psr\Http\Message\UriInterface $uri
+     * The endpoint path.
+     * @param array<string,mixed> $options
+     * Options to pass to the http client.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     * The response from the http client.
+     *
+     * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
+     */
+    public function post(string|UriInterface $uri = '', array $options = []): ResponseInterface;
+
+    /**
+     * Makes a PUT request to the Xero API endpoint.
+     *
+     * @param string|\Psr\Http\Message\UriInterface $uri
+     * The endpoint path.
+     * @param array<string,mixed> $options
+     * Options to pass to the http client.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     * The response from the http client.
+     *
+     * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
+     */
+    public function put(string|UriInterface $uri = '', array $options = []): ResponseInterface;
 }

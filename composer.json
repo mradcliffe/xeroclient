@@ -2,7 +2,10 @@
   "name": "mradcliffe/xeroclient",
   "description": "Provides a Guzzle client for use with the Xero Accounting and Payroll APIs.",
   "minimum-stability": "stable",
-  "license": "MIT",
+  "license": [
+    "MIT",
+    "GPL-2.0-or-later"
+  ],
   "authors": [
     {
       "name": "Matthew Radcliffe",
@@ -21,10 +24,10 @@
     }
   },
   "require": {
-    "php": "^8",
-    "league/oauth2-client": "^2.4",
-    "guzzlehttp/oauth-subscriber": "0.6.0",
-    "ext-json": "*"
+    "php": "^8.1",
+    "league/oauth2-client": "^2",
+    "ext-json": "*",
+    "guzzlehttp/guzzle": "^7"
   },
   "require-dev": {
     "ext-openssl": "*",
