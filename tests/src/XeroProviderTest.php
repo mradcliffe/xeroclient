@@ -112,20 +112,24 @@ class XeroProviderTest extends TestCase
      *
      * @dataProvider provideResponseData
      *
-     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException|\GuzzleHttp\Exception\GuzzleException
      */
     public function testGetResponseMessage(array $data, string $expected): void
     {
         $json = json_encode($data);
         $this->expectExceptionMessage($expected);
 
+        $streamProphet = $this->prophet->prophesize('\Psr\Http\Message\StreamInterface');
+        $streamProphet->getContents()->willReturn($json);
+        $streamProphet->__toString()->willReturn($json);
+
         $requestProphet = $this->prophet->prophesize('\Psr\Http\Message\RequestInterface');
         $responseProphet = $this->prophet->prophesize('\Psr\Http\Message\ResponseInterface');
         $responseProphet->getStatusCode()->willReturn(400);
-        $responseProphet->getBody()->willReturn($json);
+        $responseProphet->getBody()->willReturn($streamProphet->reveal());
         $responseProphet
             ->getHeader(Argument::containingString('content-type'))
-            ->willReturn('application/json');
+            ->willReturn(['application/json']);
         $guzzleProphet = $this->prophet->prophesize('\GuzzleHttp\ClientInterface');
         $guzzleProphet->send(Argument::any())->willReturn($responseProphet->reveal());
 

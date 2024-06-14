@@ -7,21 +7,21 @@ trait XeroHelperTrait
     /**
      * Valid condition operators.
      *
-     * @var array
+     * @var string[]
      */
     protected static $conditionOperators = ['==', '!=', 'StartsWith', 'EndsWith', 'Contains', 'guid'];
 
     /**
      * The Xero API conditions for GET requests.
      *
-     * @var array
+     * @var string[]
      */
     protected $conditions = [];
 
     /**
      * Get the conditions for the request.
      *
-     * @return array
+     * @return string[]
      *   The conditions protected property.
      */
     public function getConditions()
@@ -34,7 +34,7 @@ trait XeroHelperTrait
      *
      * @param string $field
      *   The field to add the condition for.
-     * @param string $value
+     * @param string|bool $value
      *   The value to compare against.
      * @param string $operator
      *   The operator to use in the condition:
@@ -47,7 +47,7 @@ trait XeroHelperTrait
      *
      * @return $this
      */
-    public function addCondition($field, $value = '', $operator = '==')
+    public function addCondition(string $field, string|bool $value = '', string $operator = '==')
     {
         if (!in_array($operator, self::$conditionOperators)) {
             throw new \InvalidArgumentException('Invalid operator');
@@ -78,7 +78,7 @@ trait XeroHelperTrait
      *
      * @return $this
      */
-    public function addOperator($operator = 'AND')
+    public function addOperator(string $operator = 'AND')
     {
         if (!in_array($operator, ['AND', 'OR'])) {
             throw new \InvalidArgumentException('Invalid logical operator');
@@ -92,7 +92,7 @@ trait XeroHelperTrait
     /**
      * Compile the conditions array into a query parameter.
      *
-     * @return array
+     * @return array<string,string>
      *   An associative array that can be merged into the query options.
      */
     public function compileConditions()
@@ -112,10 +112,10 @@ trait XeroHelperTrait
      * @param string $direction
      *   An optional direction.
      *
-     * @return array
+     * @return array<string,string>
      *   An associative array that can be merged into the query options.
      */
-    public function orderBy($field, $direction = 'ASC')
+    public function orderBy(string $field, string $direction = 'ASC')
     {
         $ret = ['order' => $field];
         if ($direction === 'DESC') {
@@ -130,10 +130,10 @@ trait XeroHelperTrait
      * @param string $request_parameters
      *  The HTTP Request parameters from the API to the web server.
      *
-     * @return array
+     * @return array<string,string>
      *  An associative array keyed by the parameter key.
      */
-    public function getRequestParameters($request_parameters)
+    public function getRequestParameters(string $request_parameters)
     {
         $ret = [];
         $parts = explode('&', $request_parameters);

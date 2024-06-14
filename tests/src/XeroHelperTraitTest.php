@@ -2,6 +2,8 @@
 
 namespace Radcliffe\Tests\Xero;
 
+use Radcliffe\Tests\Xero\Mocks\HelperTraitMock;
+
 class XeroHelperTraitTest extends XeroClientTestBase
 {
 
@@ -17,8 +19,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testGetRequestParameters(string $parameters, array $expected): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
 
         $this->assertEquals($expected, $mock->getRequestParameters($parameters));
     }
@@ -39,8 +40,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testAddCondition(string $field, bool|int|string $value, string $operator, array $expected): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
 
         $mock->addCondition($field, $value, $operator);
 
@@ -59,8 +59,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testAddOperator(string $operator, array $expected): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
 
         $mock->addOperator($operator);
 
@@ -79,8 +78,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testCompileConditions(array $conditions, array $expected): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
         foreach ($conditions as $condition) {
             $mock->addCondition($condition[0], $condition[1], $condition[2]);
         }
@@ -100,8 +98,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testOrderBy(string $direction, array $expected): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
 
         $this->assertEquals($expected, $mock->orderBy('Name', $direction));
     }
@@ -111,8 +108,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testInvalidAddCondition(): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
 
         $this->expectException(\InvalidArgumentException::class);
         $mock->addCondition('Name', 'Value', '<>');
@@ -123,8 +119,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      */
     public function testInvalidLogicalOperator(): void
     {
-        /* @var $mock \Radcliffe\Xero\XeroHelperTrait */
-        $mock = $this->getMockForTrait('\Radcliffe\Xero\XeroHelperTrait');
+        $mock = new HelperTraitMock();
 
         $this->expectException(\InvalidArgumentException::class);
         $mock->addOperator('NOT');
@@ -136,11 +131,11 @@ class XeroHelperTraitTest extends XeroClientTestBase
      * @return array<int,mixed>
      *   An array of test method parameters.
      */
-    public function requestParametersProvider(): array
+    public static function requestParametersProvider(): array
     {
         $test1_expected = [
-            'oauth_token' => $this->createRandomString(),
-            'oauth_verifier' => $this->createRandomString()
+            'oauth_token' => self::createRandomString(),
+            'oauth_verifier' => self::createRandomString()
         ];
         $test1_string = 'oauth_token=' . urlencode($test1_expected['oauth_token']) . '&' . 'oauth_verifier=' .
             urlencode($test1_expected['oauth_verifier']);
@@ -155,9 +150,9 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *
      * @return array<int,mixed>
      */
-    public function addConditionProvider(): array
+    public static function addConditionProvider(): array
     {
-        $guid = $this->createGuid();
+        $guid = self::createGuid();
         return [
             ['Name', 'Test Value', '==', ['Name=="Test Value"']],
             ['Name', 'Test Value', '!=', ['Name!="Test Value"']],
@@ -173,7 +168,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *
      * @return array<int,mixed>
      */
-    public function addOperatorProvider(): array
+    public static function addOperatorProvider(): array
     {
         return [['AND', ['AND']], ['OR', ['OR']]];
     }
@@ -183,7 +178,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *
      * @return array<int,mixed>
      */
-    public function compileConditionsProvider(): array
+    public static function compileConditionsProvider(): array
     {
         return [
             [[], []],
@@ -208,7 +203,7 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *
      * @return array<int,mixed>
      */
-    public function orderByProvider(): array
+    public static function orderByProvider(): array
     {
         return [
             ['ASC', ['order' => 'Name']],
