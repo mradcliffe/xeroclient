@@ -89,22 +89,24 @@ class XeroClient implements XeroClientInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public static function createFromConfig(array $config, array $options = []): static
     {
-        if (isset($options['tenant'])) {
-            $config['headers']['xero-tenant-id'] = $options['tenant'];
+        if (!isset($config['Accept'])) {
+            $config['Accept'] = 'application/json';
+        }
+
+        if (!isset($config['base_uri'])) {
+            $config['base_uri'] = 'https://api.xero.com/api.xro/2.0/';
         }
 
         if (isset($config['handler']) && is_a($config['handler'], '\GuzzleHttp\HandlerStack')) {
-            $stack = $config['handler'];
+            $stack = HandlerStack::create($config['handler']);
         } else {
             $stack = HandlerStack::create();
         }
 
-        $stack->push(Middleware::mapRequest(function (RequestInterface $request) use ($options) {
+        $stack->before('prepare_body', Middleware::mapRequest(function (RequestInterface $request) use ($options) {
             $validUrls = array_filter(self::getValidUrls(), fn ($url) => str_starts_with($request->getUri(), $url));
             if (empty($validUrls)) {
                 throw new XeroRequestException('API URL is not valid', $request);
@@ -113,8 +115,13 @@ class XeroClient implements XeroClientInterface
             if (!isset($options['auth_token'])) {
                 throw new XeroRequestException('Missing required parameter auth_token', $request);
             }
-            return $request->withHeader('Authorization', 'Bearer ' . $options['auth_token']);
-        }));
+            $new = $request->withHeader('Authorization', 'Bearer ' . $options['auth_token']);
+
+            if (isset($options['tenant'])) {
+                $new = $new->withHeader('Xero-tenant-id', $options['tenant']);
+            }
+             return $new;
+        }), 'xero');
 
         $client = new Client($config + [
             'handler' => $stack,
@@ -126,7 +133,6 @@ class XeroClient implements XeroClientInterface
      * {@inheritdoc}
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public static function createFromToken(
         string $id,
@@ -138,6 +144,8 @@ class XeroClient implements XeroClientInterface
         array $collaborators = [],
         string $redirectUri = ''
     ): static {
+        $guzzle_options = [];
+        $xero_options = [];
         if ($grant !== null) {
             // Fetch a new access token from a refresh token.
             $provider = new XeroProvider([
@@ -157,14 +165,20 @@ class XeroClient implements XeroClientInterface
             $token = $refreshedToken->getToken();
         }
 
-        if (!isset($options['base_uri'])) {
-            $options['base_uri'] = 'https://api.xero.com/api.xro/2.0/';
+        $guzzle_options['Accept'] = 'application/json';
+        if (isset($options['handler'])) {
+            $guzzle_options['handler'] = $options['handler'];
         }
+        if (!isset($options['base_uri'])) {
+            $guzzle_options['base_uri'] = 'https://api.xero.com/api.xro/2.0/';
+        }
+        if (isset($options['tenant'])) {
+            $xero_options['tenant'] = $options['tenant'];
+        }
+        $xero_options['auth_token'] = $token;
 
         // Create a new static instance.
-        $instance = self::createFromConfig($options, ['auth_token' => $token]);
-
-        $instance->tenantIds = $instance->getConnections();
+        $instance = self::createFromConfig($guzzle_options, $xero_options);
 
         if (isset($refreshedToken)) {
             $instance->refreshedToken = $refreshedToken;
@@ -226,10 +240,15 @@ class XeroClient implements XeroClientInterface
     /**
      * The tenant guids accessible by this client.
      *
+     * This will make a request if tenant ids is empty.
+     *
      * @return string[]
      */
     public function getTenantIds(): array
     {
+        if (!$this->tenantIds) {
+            $this->tenantIds = $this->getConnections();
+        }
         return $this->tenantIds;
     }
 }

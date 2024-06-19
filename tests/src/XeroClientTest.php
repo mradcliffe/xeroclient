@@ -32,13 +32,14 @@ class XeroClientTest extends XeroClientTestBase
      * @param array<string,string> $headers
      * @param string $body
      *
-     * @dataProvider providerGetTest
+     * @throws \GuzzleHttp\Exception\GuzzleException
      *
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException|\GuzzleHttp\Exception\GuzzleException
+     * @dataProvider providerGetTest
      */
     public function testGet(int $statusCode, array $headers, string $body): void
     {
         $options = $this->createConfiguration();
+
         $mock = new MockHandler(
             [
                 new Response($statusCode, $headers, $body)
@@ -48,6 +49,7 @@ class XeroClientTest extends XeroClientTestBase
 
         $client = XeroClient::createFromConfig($options, [
           'auth_token' => self::createRandomString(),
+          'tenant' => '46bda23d-0659-47d6-bcaf-d1419aca0e7f',
         ]);
 
         $response = $client->request('GET', 'BrandingThemes');
@@ -65,7 +67,6 @@ class XeroClientTest extends XeroClientTestBase
      *   The expected number of connections.
      *
      * @dataProvider connectionsResponseProvider
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testGetConnections(int $statusCode, array $response, int $expectedCount): void
     {
@@ -111,14 +112,26 @@ class XeroClientTest extends XeroClientTestBase
      */
     public static function providerGetTest(): array
     {
+        $json = [
+          'Id' => '3cc4210d-bf86-4cf5-aa5c-4a7c308dbfe1"',
+          'Status' => 'OK',
+          'ProviderName' => 'mradcliffe/xeroclient',
+          'DateTimeUTC' => '\/Date(1718810712561)',
+          'BrandingThemes' => [
+            [
+              'BrandingThemeID' => self::createGuid(),
+              'Name' => 'Standard',
+              'SortOrder' => 0,
+              'CreatedDateUTC' => '2010-06-29T18:16:36.27',
+            ],
+          ]
+        ];
+
         return [
             [
                 200,
-                ['Content-Type' => 'text/xml'],
-                '<?xml encoding="UTF-8" version="1.0"?><BrandingThemes><BrandingTheme><BrandingThemeID>' .
-                self::createGuid() .
-                '</BrandingThemeID><Name>Standard</Name><SortOrder>0</SortOrder><CreatedDateUTC>' .
-                '2010-06-29T18:16:36.27</CreatedDateUTC></BrandingTheme></BrandingThemes>',
+                ['Content-Type' => 'application/json'],
+                json_encode($json),
             ]
         ];
     }

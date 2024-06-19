@@ -41,7 +41,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
                 'instance' => $this->createGuid(),
             ])),
         ]);
-        $options = ['handler' => new HandlerStack($mock)];
+        $options = ['handler' => HandlerStack::create($mock)];
         $httpClient = new Client($options);
         $this->expectException(IdentityProviderException::class);
 
@@ -60,23 +60,23 @@ class XeroClientOAuth2Test extends XeroClientTestBase
      * Tests creating from a refresh token.
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testCreateFromRefreshToken(): void
     {
+        $expected = [
+          [
+            'id' => $this->createGuid(),
+            'tenantId' => $this->createGuid(),
+            'tenantType' => 'ORGANISATION',
+          ],
+        ];
         $token = $this->createRandomString(30);
         $refresh_token = $this->createRandomString(30);
-        $tenantIdResponse = json_encode([
-            [
-                'id' => $this->createGuid(),
-                'tenantId' => $this->createGuid(),
-                'tenantType' => 'ORGANISATION',
-            ],
-        ]);
+        $tenantIdResponse = json_encode($expected);
         $mock = new MockHandler([
             new Response(200, ['Content-Type' => 'application/json'], $tenantIdResponse),
         ]);
-        $options = ['handler' => new HandlerStack($mock)];
+        $options = ['handler' => HandlerStack::create($mock)];
 
         // Mocks the OAuth2 Client request factory and requests.
         $refreshTokenResponse = json_encode([
@@ -88,7 +88,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
         $providerMock = new MockHandler([
             new Response(200, ['Content-Type' => 'application/json'], $refreshTokenResponse),
         ]);
-        $providerOptions = ['handler' => new HandlerStack($providerMock)];
+        $providerOptions = ['handler' => HandlerStack::create($providerMock)];
 
         $httpClient = new Client($providerOptions);
 
@@ -103,29 +103,18 @@ class XeroClientOAuth2Test extends XeroClientTestBase
             'https://example.com/authorize'
         );
 
-        $this->assertInstanceOf('\Radcliffe\Xero\XeroClient', $client);
+        $this->assertEquals($expected, $client->getTenantIds());
     }
 
     /**
      * Tests creating from an access token.
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
-     * @throws \Radcliffe\Xero\Exception\InvalidOptionsException
      */
     public function testCreateFromAccessToken(): void
     {
         $token = $this->createRandomString(30);
-        $tenantIdResponse = json_encode([
-            [
-                'id' => $this->createGuid(),
-                'tenantId' => $this->createGuid(),
-                'tenantType' => 'ORGANISATION',
-            ],
-        ]);
-        $mock = new MockHandler([
-            new Response(200, ['Content-Type' => 'application/json'], $tenantIdResponse),
-        ]);
-        $options = ['handler' => new HandlerStack($mock)];
+        $options = [];
 
         $client = XeroClient::createFromToken(
             $this->clientId,
