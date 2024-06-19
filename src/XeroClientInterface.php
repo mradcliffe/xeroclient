@@ -164,4 +164,11 @@ interface XeroClientInterface
      * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
      */
     public function put(string|UriInterface $uri = '', array $options = []): ResponseInterface;
+
+    /**
+     * The tenant guids accessible by this client.
+     *
+     * @return string[]
+     */
+    public function getTenantIds(): array;
 }

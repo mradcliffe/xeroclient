@@ -238,11 +238,7 @@ class XeroClient implements XeroClientInterface
     }
 
     /**
-     * The tenant guids accessible by this client.
-     *
-     * This will make a request if tenant ids is empty.
-     *
-     * @return string[]
+     * {@inheritdoc}
      */
     public function getTenantIds(): array
     {
