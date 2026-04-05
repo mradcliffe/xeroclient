@@ -19,7 +19,7 @@ jobs:
         php-versions: [8.3, 8.4, 8.5]
         experimental: [false]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
