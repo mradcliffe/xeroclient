@@ -15,7 +15,7 @@
   "autoload": {
     "psr-4": {
       "Radcliffe\\Xero\\": "src/"
-    },
+    }
   },
   "autoload-dev": {
     "psr-4": {
