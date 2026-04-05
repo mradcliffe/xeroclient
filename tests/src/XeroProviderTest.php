@@ -2,11 +2,14 @@
 
 namespace Radcliffe\Tests\Xero;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Prophecy\Argument;
 use Prophecy\Prophet;
 use Radcliffe\Xero\XeroProvider;
 use PHPUnit\Framework\TestCase;
 
+#[Group('xeroclient')]
 class XeroProviderTest extends TestCase
 {
     protected Prophet $prophet;
@@ -26,9 +29,8 @@ class XeroProviderTest extends TestCase
      *   The expected result.
      * @param string|null $api
      *   The api parameter.
-     *
-     * @dataProvider validScopesProvider
      */
+    #[DataProvider('validScopesProvider')]
     public function testGetValidScopes(array $expected, ?string $api = ''): void
     {
         $custom = [];
@@ -110,10 +112,9 @@ class XeroProviderTest extends TestCase
      * @param string $expected
      *   The expect error string.
      *
-     * @dataProvider provideResponseData
-     *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException|\GuzzleHttp\Exception\GuzzleException
      */
+    #[DataProvider('provideResponseData')]
     public function testGetResponseMessage(array $data, string $expected): void
     {
         $json = json_encode($data);
