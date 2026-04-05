@@ -1,6 +1,6 @@
 # Xero Client
 
-xeroclient is a PHP library that extends Guzzle to provide integration with the [Xero API](https://developer.xero.com). It is primarily used as an API layer for your own project. It supports connecting to the Accounting API, Payroll API and File API URLs as either a private, public or partner application although implementation and storage of OAuth1 configuration is up to the implementing software. xeroclient aims to abide by the following criteria in regard to Xero integration:
+xeroclient is a PHP library that extends Guzzle to provide integration with the [Xero API](https://developer.xero.com). It is primarily used as an API layer for your own project. It supports connecting to the Accounting API, Payroll API and File API URLs as either a private, public or partner application although implementation and storage of OAuth2 configuration is up to the implementing software. xeroclient aims to abide by the following criteria in regard to Xero integration:
 
 1. Abides by the PSR-2 standard.
 2. Uses contemporary PHP libraries such as Guzzle.
@@ -15,7 +15,7 @@ Ultimately it is up to the software that uses xeroclient to deal with [serializa
 
 ## Dependencies
 
-* PHP 8.1 or greater
+* PHP 8.3 or greater
 * [league/oauth2-client](https://packagist.org/packages/league/oauth2-client)
 * [guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle)
 
