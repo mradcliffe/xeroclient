@@ -133,12 +133,13 @@ class XeroClient implements XeroClientInterface
      * {@inheritdoc}
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function createFromToken(
         string $id,
         string $secret,
         string $token,
-        string $grant = null,
+        ?string $grant = null,
         string $api = 'accounting',
         array $options = [],
         array $collaborators = [],
@@ -195,36 +196,6 @@ class XeroClient implements XeroClientInterface
     public function request(string $method, UriInterface|string $uri = '', array $options = []): ResponseInterface
     {
         return $this->client->request(strtoupper($method), $uri, $options);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function get(UriInterface|string $uri = '', array $options = []): ResponseInterface
-    {
-        return $this->request('GET', $uri, $options);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function post(UriInterface|string $uri = '', array $options = []): ResponseInterface
-    {
-        return $this->request('POST', $uri, $options);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function put(UriInterface|string $uri = '', array $options = []): ResponseInterface
-    {
-        return $this->request('PUT', $uri, $options);
     }
 
     /**

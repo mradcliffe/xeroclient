@@ -82,7 +82,7 @@ interface XeroClientInterface
         string $id,
         string $secret,
         string $token,
-        string $grant = null,
+        ?string $grant = null,
         string $api = 'accounting',
         array $options = [],
         array $collaborators = [],
@@ -119,51 +119,6 @@ interface XeroClientInterface
      *   The response from the http client.
      */
     public function request(string $method, string|UriInterface $uri = '', array $options = []): ResponseInterface;
-
-    /**
-     * Makes a GET request to the Xero API endpoint.
-     *
-     * @param string|\Psr\Http\Message\UriInterface $uri
-     *    The endpoint path.
-     * @param array<string,mixed> $options
-     *    Options to pass to the http client.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     *    The response from the http client.
-     *
-     * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
-     */
-    public function get(string|UriInterface $uri = '', array $options = []): ResponseInterface;
-
-    /**
-     * Makes a POST request to the Xero API endpoint.
-     *
-     * @param string|\Psr\Http\Message\UriInterface $uri
-     * The endpoint path.
-     * @param array<string,mixed> $options
-     * Options to pass to the http client.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     * The response from the http client.
-     *
-     * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
-     */
-    public function post(string|UriInterface $uri = '', array $options = []): ResponseInterface;
-
-    /**
-     * Makes a PUT request to the Xero API endpoint.
-     *
-     * @param string|\Psr\Http\Message\UriInterface $uri
-     * The endpoint path.
-     * @param array<string,mixed> $options
-     * Options to pass to the http client.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     * The response from the http client.
-     *
-     * @deprecated in 0.5.0 and removed in 0.6.0. Use the request method.
-     */
-    public function put(string|UriInterface $uri = '', array $options = []): ResponseInterface;
 
     /**
      * The tenant guids accessible by this client.

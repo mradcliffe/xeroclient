@@ -2,8 +2,11 @@
 
 namespace Radcliffe\Tests\Xero;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Radcliffe\Tests\Xero\Mocks\HelperTraitMock;
 
+#[Group('xeroclient')]
 class XeroHelperTraitTest extends XeroClientTestBase
 {
 
@@ -14,9 +17,8 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *   The parameter string to test.
      * @param array<string,mixed> $expected
      *   The expected output from the method.
-     *
-     * @dataProvider requestParametersProvider
      */
+    #[DataProvider('requestParametersProvider')]
     public function testGetRequestParameters(string $parameters, array $expected): void
     {
         $mock = new HelperTraitMock();
@@ -35,9 +37,8 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *   The operator parameter.
      * @param string[] $expected
      *   The expected value of \Radcliffe\Xero\XeroHelperTrait::$conditions.
-     *
-     * @dataProvider addConditionProvider
      */
+    #[DataProvider('addConditionProvider')]
     public function testAddCondition(string $field, bool|int|string $value, string $operator, array $expected): void
     {
         $mock = new HelperTraitMock();
@@ -54,9 +55,8 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *   The logical operator
      * @param string[] $expected
      *   The expected conditions array.
-     *
-     * @dataProvider addOperatorProvider
      */
+    #[DataProvider('addOperatorProvider')]
     public function testAddOperator(string $operator, array $expected): void
     {
         $mock = new HelperTraitMock();
@@ -73,9 +73,8 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *   An array of conditions.
      * @param string[] $expected
      *   The expected value.
-     *
-     * @dataProvider compileConditionsProvider
      */
+    #[DataProvider('compileConditionsProvider')]
     public function testCompileConditions(array $conditions, array $expected): void
     {
         $mock = new HelperTraitMock();
@@ -93,9 +92,8 @@ class XeroHelperTraitTest extends XeroClientTestBase
      *   The direction to order by.
      * @param string[] $expected
      *   The expected value.
-     *
-     * @dataProvider orderByProvider
      */
+    #[DataProvider('orderByProvider')]
     public function testOrderBy(string $direction, array $expected): void
     {
         $mock = new HelperTraitMock();

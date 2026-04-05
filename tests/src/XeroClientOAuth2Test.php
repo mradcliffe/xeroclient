@@ -7,13 +7,13 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use PHPUnit\Framework\Attributes\Group;
 use Radcliffe\Xero\XeroClient;
 
 /**
  * Tests XeroClient OAuth2 code.
- *
- * @group xeroclient
  */
+#[Group('xeroclient')]
 class XeroClientOAuth2Test extends XeroClientTestBase
 {
     protected string $clientId;
@@ -60,6 +60,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
      * Tests creating from a refresh token.
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testCreateFromRefreshToken(): void
     {
@@ -110,6 +111,7 @@ class XeroClientOAuth2Test extends XeroClientTestBase
      * Tests creating from an access token.
      *
      * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testCreateFromAccessToken(): void
     {

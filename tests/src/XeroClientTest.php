@@ -5,13 +5,14 @@ namespace Radcliffe\Tests\Xero;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Radcliffe\Xero\XeroClient;
 
 /**
  * Tests for the XeroClient class.
- *
- * @group xeroclient
  */
+#[Group('xeroclient')]
 class XeroClientTest extends XeroClientTestBase
 {
 
@@ -33,9 +34,8 @@ class XeroClientTest extends XeroClientTestBase
      * @param string $body
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
-     *
-     * @dataProvider providerGetTest
      */
+    #[DataProvider('providerGetTest')]
     public function testGet(int $statusCode, array $headers, string $body): void
     {
         $options = $this->createConfiguration();
@@ -65,9 +65,8 @@ class XeroClientTest extends XeroClientTestBase
      *   The response body to encode as json.
      * @param int $expectedCount
      *   The expected number of connections.
-     *
-     * @dataProvider connectionsResponseProvider
      */
+    #[DataProvider('connectionsResponseProvider')]
     public function testGetConnections(int $statusCode, array $response, int $expectedCount): void
     {
         $mock = new MockHandler([
