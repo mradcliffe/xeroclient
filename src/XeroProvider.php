@@ -32,13 +32,22 @@ class XeroProvider extends AbstractProvider
      * @var string[]
      */
     public static array $validScopes = [
-      'offline_access', 'openid', 'profile', 'email', 'accounting.transactions', 'accounting.transactions.read',
-      'accounting.reports.read', 'accounting.journals.read', 'accounting.settings', 'accounting.settings.read',
+      'offline_access', 'openid', 'profile', 'email',
+      'accounting.invoices', 'accounting.payments', 'accounting.banktransactions', 'accounting.manualjournals',
+      'accounting.invoices.read', 'accounting.payments.ready', 'accounting.banktransactions.read',
+      'accounting.manualjournals.read', 'accounting.journals.read', 'accounting.settings', 'accounting.settings.read',
       'accounting.contacts',  'accounting.contacts.read', 'accounting.attachments', 'accounting.attachments.read',
+      'accounting.reports.aged.read', 'accounting.reports.balancesheet.read', 'accounting.reports.banksummary.read',
+      'accounting.reports.budgetsummary.read', 'accounting.reports.executivesummary.read',
+      'accounting.reports.profitandloss.read', 'accounting.reports.trialbalance.read',
+      'accounting.reports.taxreports.read', 'accounting.reports.tenninetynine.read',
       'payroll.employees', 'payroll.employees.read', 'payroll.payruns', 'payroll.payruns.read', 'payroll.payslip',
-      'payroll.payslip.read', 'payroll.timesheets', 'payroll.timesheets.read', 'payroll.settings',
-      'payroll.settings.read', 'files', 'file.read', 'assets', 'assets.read', 'projects', 'projects.read',
-      'paymentservices', 'bankfeeds',
+      'payroll.payslip.read', 'payroll.timesheets', 'payroll.timesheets.read', 'payroll.settings', 'payroll.settings.read',
+      'files', 'file.read',
+      'assets', 'assets.read',
+      'projects', 'projects.read',
+      'paymentservices',
+      'bankfeeds',
     ];
 
     /**
@@ -148,12 +157,32 @@ class XeroProvider extends AbstractProvider
         if ($api === 'openid') {
             $scopes = array_merge($scopes, ['openid', 'profile', 'email']);
         } elseif ($api === 'accounting') {
-            $types = ['transactions', 'settings', 'contacts', 'attachments'];
+            $types = [
+                'invoices',
+                'payments',
+                'banktransactions',
+                'manualjournals',
+                'settings',
+                'contacts',
+                'attachments',
+            ];
             foreach ($types as $type) {
                 $scopes[] = "accounting.$type";
                 $scopes[] = "accounting.$type.read";
             }
-            $scopes = array_merge($scopes, ['accounting.reports.read', 'accounting.journals.read']);
+            $scopes = array_merge($scopes, [
+                'accounting.budgets.read',
+                'accounting.journals.read',
+                'accounting.reports.aged.read',
+                'accounting.reports.balancesheet.read',
+                'accounting.reports.banksummary.read',
+                'accounting.reports.budgetsummary.read',
+                'accounting.reports.executivesummary.read',
+                'accounting.reports.profitandloss.read',
+                'accounting.reports.trialbalance.read',
+                'accounting.reports.taxreports.read',
+                'accounting.reports.tenninetynine.read',
+            ]);
         } elseif (str_starts_with($api ?? '', 'payroll')) {
             // @todo Split the logic into au, uk, nz, and other sections as necessary.
             $types = ['employees', 'payruns', 'payslip', 'timesheets', 'settings'];
