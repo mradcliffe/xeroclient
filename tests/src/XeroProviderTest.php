@@ -35,7 +35,7 @@ class XeroProviderTest extends TestCase
     {
         $custom = [];
         if ($api === 'custom') {
-            $custom = ['accounting.transactions.read', 'accounting.reports.read'];
+            $custom = $expected;
         }
         $this->assertEquals($expected, XeroProvider::getValidScopes($api, $custom));
     }
@@ -51,16 +51,30 @@ class XeroProviderTest extends TestCase
             [
               [
                   'offline_access',
-                  'accounting.transactions',
-                  'accounting.transactions.read',
+                  'accounting.invoices',
+                  'accounting.invoices.read',
+                  'accounting.payments',
+                  'accounting.payments.read',
+                  'accounting.banktransactions',
+                  'accounting.banktransactions.read',
+                  'accounting.manualjournals',
+                  'accounting.manualjournals.read',
                   'accounting.settings',
                   'accounting.settings.read',
                   'accounting.contacts',
                   'accounting.contacts.read',
                   'accounting.attachments',
                   'accounting.attachments.read',
-                  'accounting.reports.read',
-                  'accounting.journals.read',
+                  'accounting.budgets.read',
+                  'accounting.reports.aged.read',
+                  'accounting.reports.balancesheet.read',
+                  'accounting.reports.banksummary.read',
+                  'accounting.reports.budgetsummary.read',
+                  'accounting.reports.executivesummary.read',
+                  'accounting.reports.profitandloss.read',
+                  'accounting.reports.trialbalance.read',
+                  'accounting.reports.taxreports.read',
+                  'accounting.reports.tenninetynine.read',
               ],
               'accounting',
             ],
@@ -100,7 +114,7 @@ class XeroProviderTest extends TestCase
             [['offline_access', 'projects', 'projects.read'], 'projects'],
             [['offline_access', 'paymentservices', 'bankfeeds'], 'restricted'],
             [['offline_access', 'assets', 'assets.read'], 'assets'],
-            [['accounting.transactions.read', 'accounting.reports.read'], 'custom'],
+            [['accounting.invoices.read', 'accounting.reports.banksummary.read'], 'custom'],
         ];
     }
 
