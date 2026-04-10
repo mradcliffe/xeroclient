@@ -64,7 +64,6 @@ class XeroProviderTest extends TestCase
                   'accounting.attachments',
                   'accounting.attachments.read',
                   'accounting.budgets.read',
-                  'accounting.journals.read',
                   'accounting.reports.aged.read',
                   'accounting.reports.balancesheet.read',
                   'accounting.reports.banksummary.read',

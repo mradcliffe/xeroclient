@@ -35,8 +35,8 @@ class XeroProvider extends AbstractProvider
       'offline_access', 'openid', 'profile', 'email',
       'accounting.invoices', 'accounting.payments', 'accounting.banktransactions', 'accounting.manualjournals',
       'accounting.invoices.read', 'accounting.payments.ready', 'accounting.banktransactions.read',
-      'accounting.manualjournals.read', 'accounting.journals.read', 'accounting.settings', 'accounting.settings.read',
-      'accounting.contacts',  'accounting.contacts.read', 'accounting.attachments', 'accounting.attachments.read',
+      'accounting.manualjournals.read', 'accounting.settings', 'accounting.settings.read', 'accounting.contacts',
+      'accounting.contacts.read', 'accounting.attachments', 'accounting.attachments.read',
       'accounting.reports.aged.read', 'accounting.reports.balancesheet.read', 'accounting.reports.banksummary.read',
       'accounting.reports.budgetsummary.read', 'accounting.reports.executivesummary.read',
       'accounting.reports.profitandloss.read', 'accounting.reports.trialbalance.read',
@@ -173,7 +173,8 @@ class XeroProvider extends AbstractProvider
             }
             $scopes = array_merge($scopes, [
                 'accounting.budgets.read',
-                'accounting.journals.read',
+                // Xero Developers mention 'accounting.journals.read' is available, but it the API returns an error
+                // when attempting to use it.
                 'accounting.reports.aged.read',
                 'accounting.reports.balancesheet.read',
                 'accounting.reports.banksummary.read',
